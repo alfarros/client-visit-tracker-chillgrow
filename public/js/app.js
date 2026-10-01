@@ -78,4 +78,54 @@
             window.history.replaceState({}, '', url);
         }));
     }
+
+    const actionMenus = [...document.querySelectorAll('.action-menu')];
+    const placeActionMenu = (details) => {
+        if (!details.open) return;
+
+        const trigger = details.querySelector('summary');
+        const menu = details.querySelector('.action-menu-items');
+        if (!trigger || !menu) return;
+
+        const triggerRect = trigger.getBoundingClientRect();
+        menu.style.position = 'fixed';
+        menu.style.right = 'auto';
+        menu.style.bottom = 'auto';
+        menu.style.visibility = 'hidden';
+
+        const menuWidth = menu.offsetWidth;
+        const menuHeight = menu.offsetHeight;
+        const margin = 10;
+        const gap = 7;
+        const left = Math.max(margin, Math.min(triggerRect.right - menuWidth, window.innerWidth - menuWidth - margin));
+        const spaceBelow = window.innerHeight - triggerRect.bottom - margin;
+        const spaceAbove = triggerRect.top - margin;
+        const opensUp = menuHeight + gap > spaceBelow && spaceAbove > spaceBelow;
+        const top = opensUp
+            ? Math.max(margin, triggerRect.top - menuHeight - gap)
+            : Math.min(triggerRect.bottom + gap, window.innerHeight - menuHeight - margin);
+
+        menu.style.left = `${left}px`;
+        menu.style.top = `${top}px`;
+        menu.style.visibility = 'visible';
+    };
+
+    actionMenus.forEach((details) => details.addEventListener('toggle', () => {
+        if (details.open) requestAnimationFrame(() => placeActionMenu(details));
+    }));
+
+    document.addEventListener('click', (event) => {
+        const clickedMenuAction = event.target instanceof Element
+            ? event.target.closest('.action-menu-items a, .action-menu-items button')
+            : null;
+
+        actionMenus.forEach((details) => {
+            if (details.open && (!details.contains(event.target) || clickedMenuAction)) {
+                details.open = false;
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => actionMenus.forEach(placeActionMenu), true);
+    window.addEventListener('resize', () => actionMenus.forEach(placeActionMenu));
 })();
