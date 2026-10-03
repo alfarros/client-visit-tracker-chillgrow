@@ -18,6 +18,7 @@ class StoreKunjunganKlienRequest extends FormRequest
         return [
             'pasien_id' => ['required', 'integer', Rule::exists((new Pasien())->getTable(), 'id')],
             'tanggal_kunjungan' => ['required', 'date_format:Y-m-d'],
+            'jam_kunjungan' => ['required', 'date_format:H:i'],
             'cara_bayar' => ['required', Rule::in(['BPJS', 'UMUM', 'ASURANSI'])],
         ];
     }
@@ -29,6 +30,8 @@ class StoreKunjunganKlienRequest extends FormRequest
             'pasien_id.exists' => 'Pasien yang dipilih tidak ditemukan.',
             'tanggal_kunjungan.required' => 'Tanggal kunjungan wajib diisi.',
             'tanggal_kunjungan.date_format' => 'Masukkan tanggal kunjungan yang valid.',
+            'jam_kunjungan.required' => 'Jam kunjungan wajib diisi.',
+            'jam_kunjungan.date_format' => 'Masukkan jam kunjungan yang valid.',
             'cara_bayar.required' => 'Pilih cara bayar.',
             'cara_bayar.in' => 'Pilih salah satu cara bayar yang tersedia.',
         ];

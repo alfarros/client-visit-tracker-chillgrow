@@ -1167,6 +1167,10 @@ td:first-child {
   background: #fff0ef;
   color: #bc4c48;
 }
+.badge-status-berlangsung {
+  background: #e8f2ff;
+  color: #3375b3;
+}
 .readonly-note {
   color: #8a969e;
   font-size: 10px;
@@ -1282,6 +1286,164 @@ td:first-child {
 }
 .exam-tab-panel[hidden] {
   display: none;
+}
+.monthly-progress-panel {
+  padding-bottom: 4px;
+}
+.monthly-progress-heading {
+  align-items: center;
+  margin-bottom: 18px;
+}
+.monthly-progress-heading h2 {
+  color: #354550;
+  font-size: 15px;
+  margin: 0 0 5px;
+}
+.monthly-progress-heading p {
+  margin: 0;
+}
+.evaluation-accordion-list {
+  display: grid;
+  gap: 12px;
+}
+.evaluation-accordion {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.evaluation-accordion summary {
+  align-items: center;
+  color: #344550;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 700;
+  justify-content: space-between;
+  list-style: none;
+  padding: 16px 18px;
+}
+.evaluation-accordion summary::-webkit-details-marker {
+  display: none;
+}
+.evaluation-accordion[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+.evaluation-actions {
+  border-bottom: 1px solid #edf1f2;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 11px 18px;
+}
+.button-small {
+  font-size: 11px;
+  min-height: 31px;
+  padding: 6px 11px;
+}
+.accordion-chevron {
+  color: #788991;
+  font-size: 19px;
+  line-height: 1;
+  transition: transform 0.18s ease;
+}
+.evaluation-accordion[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+.evaluation-aspects {
+  display: grid;
+  gap: 0 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 4px 18px;
+}
+.evaluation-aspect {
+  border-bottom: 1px solid #edf1f2;
+  padding: 14px 0;
+}
+.evaluation-aspect:last-child {
+  border-bottom: 0;
+}
+.evaluation-aspect h3 {
+  color: #53646d;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  margin: 0 0 7px;
+  text-transform: uppercase;
+}
+.evaluation-aspect p {
+  color: #465862;
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.evaluation-modal-backdrop {
+  z-index: 80;
+}
+.evaluation-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(10, 35, 43, 0.24);
+  max-height: min(90vh, 900px);
+  max-width: 680px;
+  overflow-y: auto;
+  padding: 25px;
+  width: 100%;
+}
+.evaluation-modal-heading {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+}
+.evaluation-modal-heading h2 {
+  color: #344550;
+  font-size: 19px;
+  margin: 5px 0 0;
+}
+.modal-close {
+  align-items: center;
+  background: #f3f6f7;
+  border: 0;
+  border-radius: 50%;
+  color: #53646d;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 23px;
+  height: 34px;
+  justify-content: center;
+  line-height: 1;
+  width: 34px;
+}
+.evaluation-form {
+  gap: 16px;
+}
+.evaluation-form .field textarea {
+  min-height: 88px;
+}
+body.modal-open {
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .monthly-progress-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .evaluation-aspects {
+    grid-template-columns: 1fr;
+  }
+  .evaluation-modal-backdrop {
+    align-items: flex-end;
+    padding: 10px;
+  }
+  .evaluation-modal {
+    border-radius: 14px 14px 8px 8px;
+    max-height: 92vh;
+    padding: 20px 16px;
+  }
 }
 .empty-examination {
   align-items: flex-start;

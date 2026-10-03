@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CpptController;
+use App\Http\Controllers\EvaluasiBulananController;
 use App\Http\Controllers\KunjunganKlienController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProgramTerapisController;
@@ -20,6 +21,9 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('pasien', PasienController::class)->except(['destroy']);
+    Route::post('/evaluasi-bulanan', [EvaluasiBulananController::class, 'store'])->name('evaluasi-bulanan.store');
+    Route::put('/evaluasi-bulanan/{evaluasiBulanan}', [EvaluasiBulananController::class, 'update'])->name('evaluasi-bulanan.update');
+    Route::delete('/evaluasi-bulanan/{evaluasiBulanan}', [EvaluasiBulananController::class, 'destroy'])->name('evaluasi-bulanan.destroy');
     Route::delete('/pasien/{pasien}', [PasienController::class, 'destroy'])
         ->middleware('admin')
         ->name('pasien.destroy');

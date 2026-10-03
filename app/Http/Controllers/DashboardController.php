@@ -14,6 +14,7 @@ class DashboardController extends Controller
         $visits = KunjunganKlien::query()
             ->whereDate('tanggal_kunjungan', $today)
             ->with('pasien')
+            ->orderBy('jam_kunjungan')
             ->orderBy('id')
             ->limit(10)
             ->get();

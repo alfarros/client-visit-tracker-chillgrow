@@ -43,6 +43,7 @@
                             <th>Nama Pasien</th>
                             <th>No. Rekam Medis</th>
                             <th>Tanggal</th>
+                            <th>Jam</th>
                             <th>Cara Bayar</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -55,11 +56,12 @@
                                 <td class="cell-name">{{ $item->pasien->nama_lengkap }}</td>
                                 <td class="cell-mono">{{ $item->pasien->no_rekam_medis }}</td>
                                 <td>{{ $item->tanggal_kunjungan->format('d M Y') }}</td>
+                                <td>{{ $item->jam_kunjungan ? substr((string) $item->jam_kunjungan, 0, 5) : '—' }}</td>
                                 <td><span
                                         class="badge badge-{{ strtolower($item->cara_bayar) }}">{{ $item->cara_bayar }}</span>
                                 </td>
                                 <td><span
-                                        class="badge badge-status-{{ str($item->status)->lower() }}">{{ $item->status }}</span>
+                                        class="badge badge-status-{{ str($item->status)->lower() }}">{{ $item->status_label }}</span>
                                 </td>
                                 <td class="row-actions">
                                     <details class="action-menu">
@@ -69,15 +71,15 @@
                                                 height="20"></summary>
                                         <div class="action-menu-items"><a
                                                 href="{{ route('pasien.show', ['pasien' => $item->pasien_id, 'kunjungan' => $item->id]) }}"
-                                                title="Buka pemeriksaan pasien">Periksa Pasien</a><a
+                                                title="Periksa Pasien">Periksa</a><a
                                                 href="{{ route('kunjungan.edit', $item) }}"
                                                 title="Ubah jadwal kunjungan">Edit Jadwal</a>
-                                            @if ($item->status === 'Antre')
+                                            @if ($item->status === 'Berlangsung')
                                                 <form method="POST" action="{{ route('kunjungan.complete', $item) }}"
-                                                    onsubmit="return confirm('Tandai pemeriksaan {{ $item->pasien->nama_lengkap }} selesai? Catatan terapi dan CPPT akan dikunci.');">
+                                                    onsubmit="return confirm('Tandai sesi terapi {{ $item->pasien->nama_lengkap }} selesai? Catatan terapi dan CPPT akan dikunci.');">
                                                     @csrf @method('PATCH')<button type="submit"
                                                         title="Simpan status selesai dan kunci catatan">Selesaikan
-                                                        Pemeriksaan</button></form>
+                                                        Terapi</button></form>
                                                 @endif @if (auth()->user()->role === 'admin')
                                                     <button class="danger-text" type="button" data-delete-trigger
                                                         data-action="{{ route('kunjungan.destroy', $item) }}"

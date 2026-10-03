@@ -37,6 +37,7 @@ class KunjunganKlienController extends Controller
                 $query->whereDate('tanggal_kunjungan', '<=', $to))
             ->with('pasien')
             ->orderByDesc('tanggal_kunjungan')
+            ->orderBy('jam_kunjungan')
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
@@ -97,14 +98,19 @@ class KunjunganKlienController extends Controller
             return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
         }
 
+        if ($kunjunganKlien->status !== 'Berlangsung') {
+            return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
+                ->with('error', 'Terapi belum mencapai jam jadwalnya. Status akan berubah otomatis saat jadwal tiba.');
+        }
+
         if (! $kunjunganKlien->cppts()->exists() || ! $kunjunganKlien->programTerapis()->exists()) {
             return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
-                ->with('error', 'Lengkapi dan simpan Lembar Program Terapi serta CPPT sebelum menyelesaikan pemeriksaan.');
+                ->with('error', 'Lengkapi dan simpan Lembar Program Terapi serta CPPT sebelum menyelesaikan sesi terapi.');
         }
 
         $kunjunganKlien->update(['status' => 'Selesai']);
 
         return redirect()->route('pasien.show', [$kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
-            ->with('success', 'Pemeriksaan ditandai selesai. Catatan kini hanya dapat dilihat.');
+            ->with('success', 'Sesi terapi ditandai selesai. Catatan kini hanya dapat dilihat.');
     }
 }

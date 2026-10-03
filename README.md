@@ -8,7 +8,7 @@ Aplikasi internal MVP untuk mencatat jadwal kunjungan klien terapi okupasi. Lara
 - Dashboard jumlah jadwal dan daftar ringkas hari ini (zona waktu `Asia/Jakarta`).
 - Periksa Pasien dengan pencarian nama/No. RM, profil, tab Lembar Program Terapi dan CPPT, serta riwayat kunjungan.
 - Tabel kunjungan dengan pencarian Nama/No. RM, filter rentang tanggal, status, dan pagination.
-- Aksi Selesaikan Pemeriksaan mengunci Program Terapi dan CPPT setelah keduanya tersimpan.
+- Status berubah otomatis dari `Antre` ke `Berlangsung` saat jam jadwal terapi tiba; aksi Selesaikan Terapi mengunci Program Terapi dan CPPT setelah keduanya tersimpan.
 - Tambah, edit, serta hapus dengan dialog konfirmasi. Hapus ubahdibatasi untuk role `admin`.
 - Nomor RM disimpan sebagai teks, termasuk nol di awal.
 
@@ -30,6 +30,18 @@ Akun terapis dibuat dengan perintah yang sama, misalnya `php artisan app:create-
 Pakai PHP 8.2+ dan arahkan document root domain ke folder `public` aplikasi jika cPanel mengizinkan. Jika document root harus `public_html`, simpan seluruh proyek Laravel di luar `public_html`, salin **isi** folder `public` ke `public_html`, lalu sesuaikan path autoload dan `bootstrap/app.php` di `public_html/index.php` agar menunjuk ke proyek di luar web root. Jangan menaruh `.env`, `vendor`, `storage`, atau source aplikasi di lokasi yang dapat dilayani sebagai berkas publik.
 
 Di `.env` production, atur `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://domain-klinik`, `APP_TIMEZONE=Asia/Jakarta`, `DB_*`, dan `SESSION_SECURE_COOKIE=true`. Pastikan `storage/` serta `bootstrap/cache/` dapat ditulis oleh PHP. Jalankan `php artisan migrate --force`, `php artisan optimize`, lalu buat akun melalui perintah CLI. Jangan commit `.env` atau memasukkan password awal ke source.
+
+#### Cron Job cPanel untuk status otomatis
+
+Cron Job adalah pemicu berkala di server. Di cPanel, buka **Cron Jobs**, lalu buat job baru dengan semua pilihan waktu diatur ke `*` (setiap menit). Pada kolom **Command**, isi perintah berikut dan sesuaikan path folder proyek serta lokasi PHP dari provider hosting:
+
+```sh
+cd /home/USERNAME/client-visit-tracker && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1
+```
+
+Path `/home/USERNAME/client-visit-tracker` harus menunjuk ke folder Laravel yang berisi file `artisan`, bukan folder `public`. Lokasi PHP dapat berbeda di tiap hosting; tanyakan ke provider atau cek melalui Terminal cPanel. Setelah aktif, cPanel memanggil Laravel tiap menit; Laravel lalu menjalankan perintah yang mengubah kunjungan hari ini menjadi `Berlangsung` saat jam jadwalnya tiba. Kunjungan lama tanpa jam tetap berstatus sesuai data saat ini sampai jamnya diisi.
+
+Untuk development lokal, jalankan `php artisan schedule:work` di terminal terpisah selama aplikasi dipakai.
 
 ## Struktur data inti
 

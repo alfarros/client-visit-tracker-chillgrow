@@ -7,7 +7,7 @@
     <div class="page-heading compact-heading">
         <div><a class="back-link" href="{{ route('kunjungan.index') }}">← Kembali ke kunjungan</a>
             <h1>{{ $formTitle }}</h1>
-            <p class="muted">Isi informasi dasar jadwal kunjungan klien.</p>
+            <p class="muted">Isi informasi jadwal terapi klien.</p>
         </div>
     </div>
     <section class="panel form-panel">
@@ -41,6 +41,18 @@
                         value="{{ old('tanggal_kunjungan', $kunjunganKlien->tanggal_kunjungan?->format('Y-m-d')) }}"
                         required>
                     @error('tanggal_kunjungan')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="field">
+                    <label for="jam_kunjungan">Jam Kunjungan @if ($formMethod === 'POST')<span class="required-mark">*</span>@endif</label>
+                    <input id="jam_kunjungan" name="jam_kunjungan" type="time"
+                        value="{{ old('jam_kunjungan', $kunjunganKlien->jam_kunjungan ? substr((string) $kunjunganKlien->jam_kunjungan, 0, 5) : '') }}"
+                        @required($formMethod === 'POST')>
+                    @if ($formMethod !== 'POST' && ! $kunjunganKlien->jam_kunjungan)
+                        <span class="field-hint">Kunjungan ini belum memiliki jam jadwal. Isi agar status dapat berubah otomatis.</span>
+                    @endif
+                    @error('jam_kunjungan')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
                 </div>

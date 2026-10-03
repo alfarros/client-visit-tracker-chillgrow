@@ -79,6 +79,87 @@
         }));
     }
 
+    const evaluationModal = document.querySelector('[data-evaluation-modal]');
+    const evaluationOpenButton = document.querySelector('[data-evaluation-open]');
+    const evaluationCloseButtons = [...document.querySelectorAll('[data-evaluation-close]')];
+    const evaluationForm = evaluationModal?.querySelector('[data-evaluation-form]');
+    const evaluationTitle = evaluationModal?.querySelector('[data-evaluation-modal-title]');
+    const evaluationMethod = evaluationModal?.querySelector('[data-evaluation-method]');
+    const evaluationId = evaluationModal?.querySelector('[data-evaluation-id]');
+    const evaluationSubmit = evaluationModal?.querySelector('[data-evaluation-submit]');
+    const evaluationEditButtons = [...document.querySelectorAll('[data-evaluation-edit]')];
+    let evaluationLastFocused = null;
+
+    const evaluationFromButton = (button) => ({
+        id: Number(button.dataset.id),
+        action: button.dataset.action,
+        periode_tanggal: button.dataset.periodeTanggal,
+        sensori: button.dataset.sensori,
+        motorik_kasar: button.dataset.motorikKasar,
+        motorik_halus: button.dataset.motorikHalus,
+        kognitif_perseptual: button.dataset.kognitifPerseptual,
+        kemandirian: button.dataset.kemandirian,
+    });
+
+    const setEvaluationForm = (evaluation = null, preserveInput = false) => {
+        if (!evaluationForm) return;
+
+        if (!evaluation) {
+            evaluationForm.reset();
+            evaluationForm.action = evaluationForm.dataset.storeAction;
+            if (evaluationMethod) evaluationMethod.value = 'POST';
+            if (evaluationId) evaluationId.value = '';
+            if (evaluationTitle) evaluationTitle.textContent = 'Tambah Evaluasi';
+            if (evaluationSubmit) evaluationSubmit.textContent = 'Simpan Evaluasi';
+            return;
+        }
+
+        evaluationForm.action = evaluation.action;
+        if (evaluationMethod) evaluationMethod.value = 'PUT';
+        if (evaluationId) evaluationId.value = evaluation.id;
+        if (evaluationTitle) evaluationTitle.textContent = 'Edit Evaluasi';
+        if (evaluationSubmit) evaluationSubmit.textContent = 'Simpan Perubahan';
+
+        if (!preserveInput) {
+            ['periode_tanggal', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'].forEach((field) => {
+                const input = evaluationForm.elements.namedItem(field);
+                if (input) input.value = evaluation[field] || '';
+            });
+        }
+    };
+
+    const openEvaluationModal = (evaluation = null, preserveInput = false) => {
+        if (!evaluationModal) return;
+        evaluationLastFocused = document.activeElement;
+        setEvaluationForm(evaluation, preserveInput);
+        evaluationModal.hidden = false;
+        document.body.classList.add('modal-open');
+        evaluationModal.querySelector('input[type="date"], textarea, button')?.focus();
+    };
+    const closeEvaluationModal = () => {
+        if (!evaluationModal) return;
+        evaluationModal.hidden = true;
+        document.body.classList.remove('modal-open');
+        evaluationLastFocused?.focus();
+    };
+
+    evaluationOpenButton?.addEventListener('click', () => openEvaluationModal());
+    evaluationEditButtons.forEach((button) => button.addEventListener('click', () => {
+        openEvaluationModal(evaluationFromButton(button));
+    }));
+    evaluationCloseButtons.forEach((button) => button.addEventListener('click', closeEvaluationModal));
+    evaluationModal?.addEventListener('click', (event) => {
+        if (event.target === evaluationModal) closeEvaluationModal();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && evaluationModal && !evaluationModal.hidden) closeEvaluationModal();
+    });
+    if (evaluationModal?.dataset.reopen === 'true') {
+        const editButton = evaluationEditButtons.find((button) => Number(button.dataset.id) === Number(evaluationModal.dataset.editId));
+        const evaluation = editButton ? evaluationFromButton(editButton) : null;
+        openEvaluationModal(evaluation, Boolean(evaluation));
+    }
+
     const actionMenus = [...document.querySelectorAll('.action-menu')];
     const placeActionMenu = (details) => {
         if (!details.open) return;

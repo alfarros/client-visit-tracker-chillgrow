@@ -38,9 +38,10 @@ class PasienController extends Controller
 
     public function show(Request $request, int $id): View
     {
-        $pasien = Pasien::with(['kunjungan' => function ($q): void {
-            $q->orderBy('tanggal_kunjungan', 'desc');
-        }])->findOrFail($id);
+        $pasien = Pasien::with([
+            'kunjungan' => fn ($query) => $query->orderByDesc('tanggal_kunjungan'),
+            'evaluasiBulanan' => fn ($query) => $query->orderByDesc('periode_tanggal'),
+        ])->findOrFail($id);
 
         $kunjunganAktif = $pasien->kunjungan->firstWhere('id', (int) $request->query('kunjungan'))
             ?? $pasien->kunjungan->first();
