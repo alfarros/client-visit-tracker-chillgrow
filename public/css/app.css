@@ -1252,6 +1252,12 @@ td:first-child {
   display: grid;
   gap: 4px;
 }
+.visit-context-badges {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .examination-context strong {
   color: #394a55;
   font-size: 13px;

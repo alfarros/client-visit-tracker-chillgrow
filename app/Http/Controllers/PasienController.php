@@ -26,7 +26,13 @@ class PasienController extends Controller
 
     public function create(): View
     {
-        return view('pasiens.form', ['pasien' => new Pasien(), 'formTitle' => 'Tambah Pasien', 'formAction' => route('pasien.store'), 'formMethod' => 'POST']);
+        return view('pasiens.form', [
+            'pasien' => new Pasien(),
+            'formTitle' => 'Tambah Pasien',
+            'formAction' => route('pasien.store'),
+            'formMethod' => 'POST',
+            'cancelUrl' => route('pasien.index'),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -43,8 +49,17 @@ class PasienController extends Controller
             'evaluasiBulanan' => fn ($query) => $query->orderByDesc('periode_tanggal'),
         ])->findOrFail($id);
 
-        $kunjunganAktif = $pasien->kunjungan->firstWhere('id', (int) $request->query('kunjungan'))
-            ?? $pasien->kunjungan->first();
+        $kunjunganDiminta = $request->filled('kunjungan')
+            ? $pasien->kunjungan->firstWhere('id', (int) $request->query('kunjungan'))
+            : null;
+        $melihatRiwayat = $kunjunganDiminta !== null;
+        $kunjunganAktif = $kunjunganDiminta
+            ?? $pasien->kunjungan->firstWhere('status', 'Berlangsung')
+            ?? $pasien->kunjungan
+                ->filter(fn ($kunjungan) => $kunjungan->status === 'Antre'
+                    && $kunjungan->tanggal_kunjungan->greaterThanOrEqualTo(today()))
+                ->sortBy(fn ($kunjungan) => $kunjungan->tanggal_kunjungan->format('Y-m-d').' '.($kunjungan->jam_kunjungan ?? '23:59:59'))
+                ->first();
         $cppt = null;
         $programTerapis = null;
 
@@ -54,12 +69,18 @@ class PasienController extends Controller
             $programTerapis = $kunjunganAktif->programTerapis->sortByDesc('created_at')->first();
         }
 
-        return view('pasiens.show', compact('pasien', 'kunjunganAktif', 'cppt', 'programTerapis'));
+        return view('pasiens.show', compact('pasien', 'kunjunganAktif', 'cppt', 'programTerapis', 'melihatRiwayat'));
     }
 
     public function edit(Pasien $pasien): View
     {
-        return view('pasiens.form', ['pasien' => $pasien, 'formTitle' => 'Edit Data Pasien', 'formAction' => route('pasien.update', $pasien), 'formMethod' => 'PUT']);
+        return view('pasiens.form', [
+            'pasien' => $pasien,
+            'formTitle' => 'Edit Data Pasien',
+            'formAction' => route('pasien.update', $pasien),
+            'formMethod' => 'PUT',
+            'cancelUrl' => route('pasien.show', $pasien),
+        ]);
     }
 
     public function update(Request $request, Pasien $pasien): RedirectResponse

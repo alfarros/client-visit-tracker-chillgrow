@@ -7,13 +7,22 @@
     @php($readOnly = $kunjunganAktif?->status === 'Selesai')
     <div class="page-heading">
         <div><a class="back-link" href="{{ route('pasien.index') }}">← Kembali ke pasien</a>
-            <h1>Periksa Pasien</h1>
-            <p class="muted">Lembar terapi, CPPT, dan riwayat kunjungan.</p>
+            @if ($melihatRiwayat && $kunjunganAktif)
+                <h1>Detail Kunjungan · {{ $kunjunganAktif->tanggal_kunjungan->locale('id')->translatedFormat('d F Y') }}</h1>
+                <p class="muted">{{ $pasien->nama_lengkap }} · {{ $kunjunganAktif->status_label }} · Cara bayar {{ $kunjunganAktif->cara_bayar }}</p>
+            @else
+                <h1>Periksa Pasien</h1>
+                <p class="muted">Lembar terapi, CPPT, dan riwayat kunjungan.</p>
+            @endif
         </div>
         <div class="heading-actions">
-            <a class="button button-secondary" href="{{ route('pasien.edit', $pasien) }}">Edit Pasien</a>
-            <a class="button button-primary" href="{{ route('kunjungan.create', ['pasien_id' => $pasien->id]) }}">＋ Jadwalkan
-                Kunjungan</a>
+            @if ($melihatRiwayat)
+                <a class="button button-secondary" href="{{ route('pasien.show', $pasien) }}">← Kembali ke Profil Pasien</a>
+            @else
+                <a class="button button-secondary" href="{{ route('pasien.edit', $pasien) }}">Edit Pasien</a>
+                <a class="button button-primary" href="{{ route('kunjungan.create', ['pasien_id' => $pasien->id]) }}">＋ Jadwalkan
+                    Kunjungan</a>
+            @endif
             @if ($kunjunganAktif && $kunjunganAktif->status === 'Berlangsung')
                 <form method="POST" action="{{ route('kunjungan.complete', $kunjunganAktif) }}"
                     onsubmit="return confirm('Tandai sesi terapi ini selesai? Catatan terapi dan CPPT akan dikunci.');">
@@ -44,8 +53,9 @@
             @if ($kunjunganAktif)
             <div class="examination-context">
                 <div><span class="eyebrow">JADWAL TERAPI</span><strong>{{ $kunjunganAktif->tanggal_kunjungan->locale('id')->translatedFormat('d F Y') }} @if($kunjunganAktif->jam_kunjungan) · {{ substr((string) $kunjunganAktif->jam_kunjungan, 0, 5) }}@endif</strong>
-                </div><span
+                </div><div class="visit-context-badges"><span
                     class="badge badge-status-{{ str($kunjunganAktif->status)->lower() }}">{{ $kunjunganAktif->status_label }}</span>
+                    <span class="badge badge-{{ strtolower($kunjunganAktif->cara_bayar) }}">{{ $kunjunganAktif->cara_bayar }}</span></div>
             </div>
             @if ($readOnly)
                 <div class="readonly-banner">Terapi selesai. Lembar Program Terapi dan CPPT hanya dapat dilihat.</div>
@@ -253,7 +263,7 @@
                                         class="badge badge-{{ strtolower($kunjungan->cara_bayar) }}">{{ $kunjungan->cara_bayar }}</span>
                                 </td>
                                 <td><a class="icon-button"
-                                        href="{{ route('pasien.show', ['pasien' => $pasien->id, 'kunjungan' => $kunjungan->id]) }}">Periksa →</a></td>
+                                        href="{{ route('pasien.show', ['pasien' => $pasien->id, 'kunjungan' => $kunjungan->id]) }}">Lihat Kunjungan →</a></td>
                             </tr>
                         @endforeach
                     </tbody>

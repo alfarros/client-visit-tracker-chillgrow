@@ -47,11 +47,16 @@ class KunjunganKlienController extends Controller
 
     public function create(Request $request): View
     {
+        $pasienId = $request->query('pasien_id');
+
         return view('kunjungan-klien.form', [
-            'kunjunganKlien' => new KunjunganKlien(['pasien_id' => $request->query('pasien_id')]),
+            'kunjunganKlien' => new KunjunganKlien(['pasien_id' => $pasienId]),
             'formTitle' => 'Tambah Kunjungan',
             'formAction' => route('kunjungan.store'),
             'formMethod' => 'POST',
+            'cancelUrl' => $pasienId && Pasien::whereKey($pasienId)->exists()
+                ? route('pasien.show', $pasienId)
+                : route('kunjungan.index'),
             'pasiens' => Pasien::select('id', 'nama_lengkap', 'no_rekam_medis')->orderBy('nama_lengkap')->get(),
         ]);
     }
@@ -70,6 +75,7 @@ class KunjunganKlienController extends Controller
             'formTitle' => 'Edit Kunjungan',
             'formAction' => route('kunjungan.update', $kunjunganKlien),
             'formMethod' => 'PUT',
+            'cancelUrl' => route('kunjungan.index'),
             'pasiens' => Pasien::select('id', 'nama_lengkap', 'no_rekam_medis')->orderBy('nama_lengkap')->get(),
         ]);
     }

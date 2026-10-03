@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="page-heading compact-heading">
-        <div><a class="back-link" href="{{ route('pasien.index') }}">← Kembali ke data pasien</a>
+        <div><a class="back-link" href="{{ $cancelUrl }}">← Kembali</a>
             <h1>{{ $formTitle }}</h1>
             <p class="muted">Isi informasi dasar pasien.</p>
         </div>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="form-actions"><a class="button button-secondary"
-                    href="{{ route('pasien.index') }}">Batal</a><button class="button button-primary"
+                    href="{{ $cancelUrl }}">Batal</a><button class="button button-primary"
                     type="submit">Simpan</button></div>
         </form>
     </section>
