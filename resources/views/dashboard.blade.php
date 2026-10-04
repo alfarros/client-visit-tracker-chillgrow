@@ -40,7 +40,6 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Nomor</th>
                             <th>Nama Pasien</th>
                             <th>No. Rekam Medis</th>
                             <th>Tanggal</th>
@@ -53,7 +52,6 @@
                     <tbody>
                         @foreach ($kunjunganHariIni as $item)
                             <tr>
-                                <td class="cell-id">{{ $item->id }}</td>
                                 <td class="cell-name">{{ $item->pasien->nama_lengkap }}</td>
                                 <td class="cell-mono">{{ $item->pasien->no_rekam_medis }}</td>
                                 <td>{{ $item->tanggal_kunjungan->format('d M Y') }}</td>
