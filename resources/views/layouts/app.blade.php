@@ -52,16 +52,16 @@
 </div>
 
 <div class="modal-backdrop" data-delete-modal hidden>
-    <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title" aria-describedby="delete-description">
-        <div class="modal-icon" aria-hidden="true">!</div>
-        <h2 id="delete-title">Hapus data ini?</h2>
-        <p id="delete-description">Data untuk <strong data-delete-name></strong> akan dihapus.</p>
+    <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+        <div class="modal-icon" aria-hidden="true" data-confirm-icon>!</div>
+        <h2 id="confirm-title" data-confirm-title>Hapus data ini?</h2>
+        <p id="confirm-description" data-confirm-description>Data yang dipilih akan dihapus.</p>
         <div class="modal-actions">
             <button class="button button-secondary" type="button" data-delete-cancel>Batal</button>
             <form method="POST" data-delete-form>
                 @csrf
                 @method('DELETE')
-                <button class="button button-danger" type="submit">Hapus</button>
+                <button class="button button-danger" type="submit" data-confirm-submit>Hapus</button>
             </form>
         </div>
     </section>

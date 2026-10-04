@@ -73,11 +73,12 @@
                                                 href="{{ route('kunjungan.edit', $item) }}"
                                                 title="Ubah jadwal kunjungan">Edit Jadwal</a>
                                             @if ($item->status === 'Berlangsung')
-                                                <form method="POST" action="{{ route('kunjungan.complete', $item) }}"
-                                                    onsubmit="return confirm('Tandai sesi terapi {{ $item->pasien->nama_lengkap }} selesai? Catatan terapi dan CPPT akan dikunci.');">
-                                                    @csrf @method('PATCH')<button type="submit"
-                                                        title="Simpan status selesai dan kunci catatan">Selesaikan
-                                                        Terapi</button></form>
+                                                <form id="complete-visit-{{ $item->id }}" method="POST" action="{{ route('kunjungan.complete', $item) }}">
+                                                    <button type="button" data-complete-trigger
+                                                        data-form-target="#complete-visit-{{ $item->id }}"
+                                                        data-confirm-title="Selesaikan terapi?"
+                                                        data-confirm-message="Terapi untuk {{ $item->pasien->nama_lengkap }} akan ditandai selesai. Lembar Program Terapi dan CPPT akan dikunci."
+                                                        title="Selesaikan terapi dan kunci catatan">Selesaikan Terapi</button></form>
                                                 @endif @if (auth()->user()->role === 'admin')
                                                     <button class="danger-text" type="button" data-delete-trigger
                                                         data-action="{{ route('kunjungan.destroy', $item) }}"

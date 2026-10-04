@@ -16,18 +16,48 @@
 
     const modal = document.querySelector('[data-delete-modal]');
     const deleteForm = modal?.querySelector('[data-delete-form]');
-    const deleteName = modal?.querySelector('[data-delete-name]');
+    const confirmTitle = modal?.querySelector('[data-confirm-title]');
+    const confirmDescription = modal?.querySelector('[data-confirm-description]');
+    const confirmIcon = modal?.querySelector('[data-confirm-icon]');
+    const confirmSubmit = modal?.querySelector('[data-confirm-submit]');
+    const methodField = deleteForm?.querySelector('input[name="_method"]');
     const cancelButton = modal?.querySelector('[data-delete-cancel]');
     let lastFocused = null;
 
-    document.querySelectorAll('[data-delete-trigger]').forEach((button) => {
-        button.addEventListener('click', () => {
-            lastFocused = button;
+    const openConfirmation = (button, type) => {
+        const targetForm = type === 'complete' ? document.querySelector(button.dataset.formTarget) : null;
+        if (type === 'complete' && !targetForm) return;
+
+        lastFocused = button;
+        confirmTitle.textContent = type === 'complete'
+            ? (button.dataset.confirmTitle || 'Selesaikan terapi?')
+            : 'Hapus data ini?';
+        confirmDescription.textContent = type === 'complete'
+            ? (button.dataset.confirmMessage || 'Catatan terapi dan CPPT akan dikunci setelah sesi ini diselesaikan.')
+            : `Data untuk ${button.dataset.name} akan dihapus.`;
+        confirmSubmit.textContent = type === 'complete' ? 'Ya, Selesaikan' : 'Hapus';
+        confirmSubmit.classList.toggle('button-success', type === 'complete');
+        confirmSubmit.classList.toggle('button-danger', type !== 'complete');
+        confirmIcon.textContent = type === 'complete' ? '✓' : '!';
+        confirmIcon.classList.toggle('modal-icon-success', type === 'complete');
+
+        if (type === 'complete') {
+            deleteForm.action = targetForm.action;
+            methodField.value = 'PATCH';
+        } else {
             deleteForm.action = button.dataset.action;
-            deleteName.textContent = button.dataset.name;
-            modal.hidden = false;
-            cancelButton.focus();
-        });
+            methodField.value = 'DELETE';
+        }
+
+        modal.hidden = false;
+        cancelButton.focus();
+    };
+
+    document.querySelectorAll('[data-delete-trigger]').forEach((button) => {
+        button.addEventListener('click', () => openConfirmation(button, 'delete'));
+    });
+    document.querySelectorAll('[data-complete-trigger]').forEach((button) => {
+        button.addEventListener('click', () => openConfirmation(button, 'complete'));
     });
 
     const closeModal = () => {

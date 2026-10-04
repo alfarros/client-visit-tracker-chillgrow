@@ -736,6 +736,10 @@ td:first-child {
   justify-content: center;
   width: 45px;
 }
+.modal-icon.modal-icon-success {
+  background: #e7f5ef;
+  color: #268b70;
+}
 .confirm-modal h2 {
   font:
     700 17px Manrope,

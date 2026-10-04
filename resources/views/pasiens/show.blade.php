@@ -24,10 +24,11 @@
                     Kunjungan</a>
             @endif
             @if ($kunjunganAktif && $kunjunganAktif->status === 'Berlangsung')
-                <form method="POST" action="{{ route('kunjungan.complete', $kunjunganAktif) }}"
-                    onsubmit="return confirm('Tandai sesi terapi ini selesai? Catatan terapi dan CPPT akan dikunci.');">
-                    @csrf @method('PATCH')
-                    <button class="button button-success" type="submit">✓ Selesaikan Terapi</button>
+                <form id="complete-visit-{{ $kunjunganAktif->id }}" method="POST" action="{{ route('kunjungan.complete', $kunjunganAktif) }}">
+                    <button class="button button-success" type="button" data-complete-trigger
+                        data-form-target="#complete-visit-{{ $kunjunganAktif->id }}"
+                        data-confirm-title="Selesaikan terapi?"
+                        data-confirm-message="Terapi untuk {{ $pasien->nama_lengkap }} akan ditandai selesai. Lembar Program Terapi dan CPPT akan dikunci.">✓ Selesaikan Terapi</button>
                 </form>
             @endif
         </div>
