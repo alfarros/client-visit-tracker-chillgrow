@@ -152,15 +152,33 @@ a {
   background: var(--teal-soft);
   color: var(--teal);
 }
+.nav-link:focus-visible {
+  background: var(--teal-soft);
+  color: var(--teal);
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
 .nav-link.active {
   background: #d9ecff;
   color: var(--teal);
 }
 .nav-icon {
+  color: inherit;
+  flex: 0 0 20px;
   font-size: 18px;
   line-height: 1;
+  transition: transform 0.18s ease;
   width: 20px;
   text-align: center;
+}
+.nav-icon svg {
+  display: block;
+  height: 18px;
+  width: 18px;
+}
+.nav-link:hover .nav-icon,
+.nav-link:focus-visible .nav-icon {
+  transform: translateX(2px);
 }
 .sidebar-bottom {
   border-top: 1px solid var(--line);
@@ -199,6 +217,13 @@ a {
 .logout-link {
   cursor: pointer;
   text-align: left;
+}
+.logout-icon {
+  font-size: 10px;
+  line-height: 1;
+  width: 18px;
+  text-align: center;
+  padding: 1px 0 0;
 }
 .main-area {
   margin-left: 248px;
@@ -976,24 +1001,24 @@ td:first-child {
     width: 135px;
   }
 }
- @media(max-width: 768px) {
-.heading-actions {
-        flex-direction: column !important;
-        width: 100% !important;
-    }
-    
-    /* Pastikan setiap tombol dan form mengambil ruang penuh */
-    .heading-actions > .button,
-    .heading-actions > form,
-    .heading-actions > a {
-        width: 100% !important;
-        flex: unset !important; /* Membatalkan aturan flex: 1 sebelumnya */
-        margin-bottom: 4px; /* Memberi jarak antar tombol */
-    }
-    
-    .heading-actions form .button {
-        width: 100% !important;
-    }
+@media (max-width: 768px) {
+  .heading-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  /* Pastikan setiap tombol dan form mengambil ruang penuh */
+  .heading-actions > .button,
+  .heading-actions > form,
+  .heading-actions > a {
+    width: 100% !important;
+    flex: unset !important; /* Membatalkan aturan flex: 1 sebelumnya */
+    margin-bottom: 4px; /* Memberi jarak antar tombol */
+  }
+
+  .heading-actions form .button {
+    width: 100% !important;
+  }
 
   .sidebar {
     box-shadow: 12px 0 30px #20333d1c;
@@ -1658,7 +1683,7 @@ body.modal-open {
   .monthly-progress-heading {
     align-items: flex-start;
     flex-direction: column;
-    gap: 16px; 
+    gap: 16px;
   }
   .archive-heading {
     align-items: flex-start;
