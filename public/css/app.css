@@ -291,9 +291,9 @@ a {
 }
 .metric-card {
   align-items: center;
-  background: linear-gradient(115deg, #fff 0%, #f3f8fd 100%);
+  background: #fff;
   border: 1px solid #e0ebf4;
-  border-radius: 12px;
+  border-radius: 12px;    
   box-shadow: var(--shadow);
   display: flex;
   gap: 18px;
