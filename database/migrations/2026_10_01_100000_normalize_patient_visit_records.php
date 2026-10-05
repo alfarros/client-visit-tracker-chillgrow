@@ -25,8 +25,9 @@ return new class extends Migration
         Schema::table('kunjungan_kliens', function (Blueprint $table): void {
             $table->dropColumn(['nama_pasien', 'no_rekam_medis']);
             $table->foreignId('pasien_id')->after('id')->constrained('pasiens')->restrictOnDelete();
-            $table->enum('cara_bayar', ['BPJS', 'UMUM', 'ASURANSI'])->change();
-            $table->enum('status', ['Antre', 'Selesai', 'Batal'])->default('Antre')->after('cara_bayar');
+            $table->enum('cara_bayar', ['Tunai', 'Transfer'])->change();
+            $table->time('jam_kunjungan')->nullable()->after('tanggal_kunjungan');
+            $table->enum('status', ['Antre', 'Berlangsung', 'Selesai', 'Batal'])->default('Antre')->after('cara_bayar');
         });
 
         Schema::create('cppts', function (Blueprint $table): void {
@@ -71,7 +72,7 @@ return new class extends Migration
 
         Schema::table('kunjungan_kliens', function (Blueprint $table): void {
             $table->dropForeign(['pasien_id']);
-            $table->dropColumn(['pasien_id', 'status']);
+            $table->dropColumn(['pasien_id', 'status', 'jam_kunjungan']);
             $table->string('cara_bayar', 20)->change();
         });
 

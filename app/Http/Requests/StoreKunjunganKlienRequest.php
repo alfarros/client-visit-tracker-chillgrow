@@ -19,7 +19,7 @@ class StoreKunjunganKlienRequest extends FormRequest
             'pasien_id' => ['required', 'integer', Rule::exists((new Pasien())->getTable(), 'id')],
             'tanggal_kunjungan' => ['required', 'date_format:Y-m-d'],
             'jam_kunjungan' => ['required', 'date_format:H:i'],
-            'cara_bayar' => ['required', Rule::in(['BPJS', 'UMUM', 'ASURANSI'])],
+            'cara_bayar' => ['required', Rule::in(['Tunai', 'Transfer'])],
         ];
     }
 

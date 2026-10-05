@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pasien_id')->constrained('pasiens')->cascadeOnDelete();
             $table->date('periode_tanggal');
+            $table->text('refleks_primitif')->nullable();
             $table->text('sensori')->nullable();
             $table->text('motorik_kasar')->nullable();
             $table->text('motorik_halus')->nullable();

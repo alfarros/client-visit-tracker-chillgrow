@@ -66,7 +66,7 @@
                     <label for="cara_bayar">Cara Bayar <span class="required-mark">*</span></label>
                     <select id="cara_bayar" name="cara_bayar" class="w-full max-w-full appearance-none bg-white" required>
                         <option value="">Pilih cara bayar</option>
-                        @foreach (['BPJS', 'UMUM', 'ASURANSI'] as $caraBayar)
+                        @foreach (['Tunai', 'Transfer'] as $caraBayar)
                             <option value="{{ $caraBayar }}" @selected(old('cara_bayar', $kunjunganKlien->cara_bayar) === $caraBayar)>{{ $caraBayar }}</option>
                         @endforeach
                     </select>

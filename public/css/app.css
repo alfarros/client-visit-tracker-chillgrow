@@ -439,15 +439,11 @@ td:first-child {
   letter-spacing: 0.2px;
   padding: 5px 9px;
 }
-.badge-bpjs {
+.badge-tunai {
   background: #e5f1fc;
   color: #225f96;
 }
-.badge-umum {
-  background: #eff2f4;
-  color: #647480;
-}
-.badge-asuransi {
+.badge-transfer {
   background: var(--green-soft);
   color: var(--green-dark);
 }
