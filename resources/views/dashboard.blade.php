@@ -14,7 +14,8 @@
     </div>
 
     <section class="metric-card" aria-label="Total pasien hari ini">
-        <div class="metric-icon" aria-hidden="true">♧</div>
+        <div class="metric-icon" aria-hidden="true"><img src="{{ asset('icons/patient.png') }}" alt="Total Pasien"
+                width="24" height="24"></div>
         <div><span class="metric-label">TOTAL PASIEN HARI INI</span><strong
                 class="metric-value">{{ $totalHariIni }}</strong><span class="metric-note">jadwal kunjungan</span></div>
         <div class="metric-date">{{ now(config('app.timezone'))->format('d.m.Y') }}</div>
@@ -63,7 +64,8 @@
                                         class="badge badge-status-{{ str($item->status)->lower() }}">{{ $item->status_label }}</span>
                                 </td>
                                 <td class="cell-action"><a class="icon-button"
-                                        href="{{ route('pasien.show', ['pasien' => $item->pasien_id, 'kunjungan' => $item->id]) }}">Periksa Pasien</a>
+                                        href="{{ route('pasien.show', ['pasien' => $item->pasien_id, 'kunjungan' => $item->id]) }}">Periksa
+                                        Pasien</a>
                                 </td>
                             </tr>
                         @endforeach
