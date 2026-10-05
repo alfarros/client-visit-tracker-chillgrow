@@ -19,7 +19,7 @@
             @if ($melihatRiwayat)
                 <a class="button button-secondary" href="{{ route('pasien.show', $pasien) }}">← Kembali ke Profil Pasien</a>
             @else
-                <a class="button button-secondary" href="{{ route('pasien.edit', $pasien) }}">Edit Pasien</a>
+                <a class="button button-secondary" href="{{ route('pasien.edit', ['pasien' => $pasien, 'return_to' => request()->fullUrl()]) }}">Edit Pasien</a>
                 <a class="button button-primary" href="{{ route('kunjungan.create', ['pasien_id' => $pasien->id]) }}">＋ Jadwalkan
                     Kunjungan</a>
             @endif
@@ -154,7 +154,7 @@
 
         <section class="panel progress-panel monthly-progress-panel" id="progres-bulanan">
                 <div class="panel-heading monthly-progress-heading">
-                    <div><h2>Riwayat Progres Bulanan</h2><p class="muted">Catat perkembangan pasien pada lima aspek terapi.</p></div>
+                    <div><h2>Riwayat Progres Bulanan</h2><p class="muted">Catat perkembangan pasien pada enam aspek terapi.</p></div>
                     <button class="button button-secondary" type="button" data-evaluation-open>＋ Tambah Evaluasi</button>
                 </div>
 
@@ -171,6 +171,7 @@
                                         data-id="{{ $evaluasi->id }}"
                                         data-action="{{ route('evaluasi-bulanan.update', $evaluasi) }}"
                                         data-periode-tanggal="{{ $evaluasi->periode_tanggal->format('Y-m-d') }}"
+                                        data-refleks-primitif="{{ $evaluasi->refleks_primitif }}"
                                         data-sensori="{{ $evaluasi->sensori }}"
                                         data-motorik-kasar="{{ $evaluasi->motorik_kasar }}"
                                         data-motorik-halus="{{ $evaluasi->motorik_halus }}"
@@ -182,6 +183,7 @@
                                 </div>
                                 <div class="evaluation-aspects">
                                     @foreach ([
+                                        'refleks_primitif' => 'Refleks Primitif',
                                         'sensori' => 'Sensori',
                                         'motorik_kasar' => 'Motorik Kasar',
                                         'motorik_halus' => 'Motorik Halus',
@@ -197,7 +199,7 @@
                 @endif
         </section>
 
-        <div class="modal-backdrop evaluation-modal-backdrop" data-evaluation-modal @if ($errors->hasAny(['pasien_id', 'periode_tanggal', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'])) data-reopen="true" @endif data-edit-id="{{ old('evaluasi_id') }}" hidden>
+        <div class="modal-backdrop evaluation-modal-backdrop" data-evaluation-modal @if ($errors->hasAny(['pasien_id', 'periode_tanggal', 'refleks_primitif', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'])) data-reopen="true" @endif data-edit-id="{{ old('evaluasi_id') }}" hidden>
             <section class="evaluation-modal" role="dialog" aria-modal="true" aria-labelledby="evaluation-modal-title">
                 <div class="evaluation-modal-heading"><div><span class="eyebrow">PROGRES BULANAN</span><h2 id="evaluation-modal-title" data-evaluation-modal-title>Tambah Evaluasi</h2></div>
                     <button class="modal-close" type="button" aria-label="Tutup" data-evaluation-close>×</button></div>
@@ -211,6 +213,7 @@
                         @error('pasien_id')<p class="field-error">{{ $message }}</p>@enderror
                     </div>
                     @foreach ([
+                        'refleks_primitif' => 'Refleks Primitif',
                         'sensori' => 'Sensori',
                         'motorik_kasar' => 'Motorik Kasar',
                         'motorik_halus' => 'Motorik Halus',

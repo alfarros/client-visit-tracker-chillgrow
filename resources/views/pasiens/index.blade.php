@@ -54,7 +54,7 @@
                                         title="Periksa Pasien" aria-label="Periksa Pasien"><img
                                             src="{{ asset('icons/check.png') }}" alt="Periksa Pasien" width="18"
                                             height="18"></a>
-                                    <a class="icon-button" href="{{ route('pasien.edit', $pasien) }}"
+                                    <a class="icon-button" href="{{ route('pasien.edit', ['pasien' => $pasien, 'return_to' => request()->fullUrl()]) }}"
                                         title="Edit Data Pasien" aria-label="Edit Data Pasien"><img
                                             src="{{ asset('icons/edit.png') }}" alt="Edit Pasien" width="18"
                                             height="18"></a>

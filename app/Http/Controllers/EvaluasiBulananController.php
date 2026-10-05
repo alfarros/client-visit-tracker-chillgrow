@@ -38,6 +38,7 @@ class EvaluasiBulananController extends Controller
         $data = $request->validate([
             'pasien_id' => ['required', 'integer', 'exists:pasiens,id'],
             'periode_tanggal' => ['required', 'date'],
+            'refleks_primitif' => ['nullable', 'string', 'max:65535'],
             'sensori' => ['nullable', 'string', 'max:65535'],
             'motorik_kasar' => ['nullable', 'string', 'max:65535'],
             'motorik_halus' => ['nullable', 'string', 'max:65535'],

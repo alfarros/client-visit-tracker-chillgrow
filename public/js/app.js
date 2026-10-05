@@ -124,6 +124,7 @@
         id: Number(button.dataset.id),
         action: button.dataset.action,
         periode_tanggal: button.dataset.periodeTanggal,
+        refleks_primitif: button.dataset.refleksPrimitif,
         sensori: button.dataset.sensori,
         motorik_kasar: button.dataset.motorikKasar,
         motorik_halus: button.dataset.motorikHalus,
@@ -151,7 +152,7 @@
         if (evaluationSubmit) evaluationSubmit.textContent = 'Simpan Perubahan';
 
         if (!preserveInput) {
-            ['periode_tanggal', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'].forEach((field) => {
+            ['periode_tanggal', 'refleks_primitif', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'].forEach((field) => {
                 const input = evaluationForm.elements.namedItem(field);
                 if (input) input.value = evaluation[field] || '';
             });
@@ -417,6 +418,20 @@
     };
     documentPreviewZoomOut?.addEventListener('click', () => changePdfZoom(-1));
     documentPreviewZoomIn?.addEventListener('click', () => changePdfZoom(1));
+    let pdfResizeTimer;
+    const rerenderPdfForViewport = () => {
+        if (!pdfDocument || !documentPreviewModal || documentPreviewModal.hidden) return;
+        window.clearTimeout(pdfResizeTimer);
+        pdfResizeTimer = window.setTimeout(() => {
+            if (!pdfDocument || documentPreviewModal.hidden) return;
+            renderPdfPage(documentPreviewRequestId).catch(() => {
+                documentPreviewStatus.textContent = 'Tampilan PDF gagal disesuaikan.';
+                documentPreviewStatus.hidden = false;
+            });
+        }, 180);
+    };
+    window.addEventListener('resize', rerenderPdfForViewport);
+    window.visualViewport?.addEventListener('resize', rerenderPdfForViewport);
     documentPreviewCloseButtons.forEach((button) => button.addEventListener('click', closeDocumentPreview));
     documentPreviewModal?.addEventListener('click', (event) => {
         if (event.target === documentPreviewModal) closeDocumentPreview();

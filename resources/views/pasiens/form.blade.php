@@ -15,6 +15,7 @@
             @csrf
             @if ($formMethod !== 'POST')
                 @method($formMethod)
+                <input type="hidden" name="return_to" value="{{ $returnUrl }}">
             @endif
             <div class="form-intro"><span class="required-note">* Wajib diisi</span></div>
             <div class="field"><label for="nama_lengkap">Nama Lengkap <span class="required-mark">*</span></label><input

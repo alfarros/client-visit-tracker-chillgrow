@@ -74,14 +74,17 @@ class PasienController extends Controller
         return view('pasiens.show', compact('pasien', 'kunjunganAktif', 'cppt', 'programTerapis', 'melihatRiwayat'));
     }
 
-    public function edit(Pasien $pasien): View
+    public function edit(Request $request, Pasien $pasien): View
     {
+        $returnUrl = $this->resolveReturnUrl($request, route('pasien.show', $pasien));
+
         return view('pasiens.form', [
             'pasien' => $pasien,
             'formTitle' => 'Edit Data Pasien',
             'formAction' => route('pasien.update', $pasien),
             'formMethod' => 'PUT',
-            'cancelUrl' => route('pasien.show', $pasien),
+            'cancelUrl' => $returnUrl,
+            'returnUrl' => $returnUrl,
         ]);
     }
 
@@ -89,7 +92,8 @@ class PasienController extends Controller
     {
         $pasien->update($this->validatedData($request, $pasien));
 
-        return redirect()->route('pasien.show', $pasien)->with('success', 'Data pasien berhasil diperbarui.');
+        return redirect($this->resolveReturnUrl($request, route('pasien.show', $pasien)))
+            ->with('success', 'Data pasien berhasil diperbarui.');
     }
 
     public function destroy(Pasien $pasien): RedirectResponse
@@ -120,5 +124,31 @@ class PasienController extends Controller
             'tanggal_lahir.date_format' => 'Masukkan tanggal lahir yang valid.',
             'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini.',
         ]);
+    }
+
+    private function resolveReturnUrl(Request $request, string $fallback): string
+    {
+        $returnUrl = $request->input('return_to');
+
+        if (! is_string($returnUrl) || $returnUrl === '') {
+            return $fallback;
+        }
+
+        $parts = parse_url($returnUrl);
+
+        if ($parts === false) {
+            return $fallback;
+        }
+
+        if (! isset($parts['host'])) {
+            return str_starts_with($returnUrl, '/') && ! str_starts_with($returnUrl, '//')
+                ? $returnUrl
+                : $fallback;
+        }
+
+        return strtolower($parts['host']) === strtolower($request->getHost())
+            && ($parts['scheme'] ?? $request->getScheme()) === $request->getScheme()
+            ? $returnUrl
+            : $fallback;
     }
 }

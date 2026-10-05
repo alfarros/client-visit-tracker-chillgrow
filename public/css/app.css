@@ -20,6 +20,7 @@
     -apple-system,
     "Segoe UI",
     sans-serif;
+  color-scheme: light;
   color: var(--ink);
   background: var(--page);
   font-synthesis: none;
@@ -30,6 +31,7 @@
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
   background: var(--page);
   font-size: 14px;
   line-height: 1.5;
@@ -50,6 +52,12 @@ a {
 .app-shell {
   min-height: 100vh;
 }
+@supports (min-height: 100dvh) {
+  body,
+  .app-shell {
+    min-height: 100dvh;
+  }
+}
 .sidebar {
   background: #fff;
   border-right: 1px solid var(--line);
@@ -57,7 +65,13 @@ a {
   display: flex;
   flex-direction: column;
   left: 0;
-  padding: 26px 18px 18px;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: calc(26px + env(safe-area-inset-top, 0px))
+    calc(18px + env(safe-area-inset-right, 0px))
+    calc(18px + env(safe-area-inset-bottom, 0px))
+    calc(18px + env(safe-area-inset-left, 0px));
   position: fixed;
   top: 0;
   width: 248px;
@@ -293,7 +307,7 @@ a {
   align-items: center;
   background: #fff;
   border: 1px solid #e0ebf4;
-  border-radius: 12px;    
+  border-radius: 12px;
   box-shadow: var(--shadow);
   display: flex;
   gap: 18px;
@@ -370,6 +384,7 @@ a {
   color: var(--teal-dark);
 }
 .table-wrap {
+  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
   width: 100%;
 }
@@ -629,6 +644,7 @@ td:first-child {
 .form-stack {
   display: grid;
   gap: 21px;
+  min-width: 0;
 }
 .form-intro {
   border-bottom: 1px solid var(--line);
@@ -643,8 +659,11 @@ td:first-child {
   color: var(--red);
 }
 .field {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 7px;
+  min-width: 0;
+  max-width: 100%;
 }
 .field label {
   color: #344550;
@@ -653,13 +672,37 @@ td:first-child {
 }
 .field input,
 .field select {
+  -webkit-appearance: none;
+  appearance: none;
   background: #fff;
   border: 1px solid #dfe7ea;
   border-radius: 7px;
   color: #344550;
   height: 43px;
+  max-width: 100%;
+  min-width: 0;
   padding: 0 12px;
   width: 100%;
+  box-sizing: border-box;
+}
+.field input[type="date"],
+.field input[type="time"] {
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.field input[type="date"]::-webkit-datetime-edit,
+.field input[type="time"]::-webkit-datetime-edit,
+.field input[type="date"]::-webkit-date-and-time-value,
+.field input[type="time"]::-webkit-date-and-time-value {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  text-align: left;
 }
 .field input::placeholder {
   color: #a7b1b7;
@@ -676,7 +719,11 @@ td:first-child {
 .field-grid {
   display: grid;
   gap: 20px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-width: 0;
+}
+.field-grid > .field {
+  min-width: 0;
 }
 .form-actions {
   border-top: 1px solid var(--line);
@@ -714,6 +761,7 @@ td:first-child {
   height: 22px;
   justify-content: center;
   width: 22px;
+  flex-shrink: 0 !important;
 }
 .toast-message {
   font-size: 13px;
@@ -727,6 +775,7 @@ td:first-child {
   padding: 20px;
   position: fixed;
   z-index: 50;
+  overscroll-behavior: contain;
 }
 .confirm-modal {
   background: #fff;
@@ -792,6 +841,12 @@ td:first-child {
   display: grid;
   grid-template-columns: minmax(340px, 0.9fr) minmax(430px, 1.1fr);
   min-height: 100vh;
+}
+@supports (min-height: 100dvh) {
+  .login-page,
+  .login-layout {
+    min-height: 100dvh;
+  }
 }
 .login-brand-panel {
   background:
@@ -925,12 +980,30 @@ td:first-child {
     width: 135px;
   }
 }
-@media (max-width: 760px) {
+ @media(max-width: 768px) {
+.heading-actions {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+    
+    /* Pastikan setiap tombol dan form mengambil ruang penuh */
+    .heading-actions > .button,
+    .heading-actions > form,
+    .heading-actions > a {
+        width: 100% !important;
+        flex: unset !important; /* Membatalkan aturan flex: 1 sebelumnya */
+        margin-bottom: 4px; /* Memberi jarak antar tombol */
+    }
+    
+    .heading-actions form .button {
+        width: 100% !important;
+    }
+
   .sidebar {
     box-shadow: 12px 0 30px #20333d1c;
     transform: translateX(-105%);
     transition: transform 0.2s ease;
-    width: 252px;
+    width: min(252px, calc(100vw - 48px));
   }
   .sidebar.is-open {
     transform: translateX(0);
@@ -940,10 +1013,13 @@ td:first-child {
   }
   .topbar {
     height: 59px;
-    padding: 0 18px;
+    padding: 0 calc(18px + env(safe-area-inset-right, 0px)) 0
+      calc(18px + env(safe-area-inset-left, 0px));
   }
   .menu-toggle {
     display: block;
+    min-height: 44px;
+    min-width: 44px;
   }
   .topbar-title {
     margin-right: auto;
@@ -953,7 +1029,9 @@ td:first-child {
     font-size: 11px;
   }
   .page-content {
-    padding: 27px 16px 40px;
+    padding: 27px calc(16px + env(safe-area-inset-right, 0px))
+      calc(40px + env(safe-area-inset-bottom, 0px))
+      calc(16px + env(safe-area-inset-left, 0px));
   }
   .page-heading {
     align-items: flex-start;
@@ -995,6 +1073,8 @@ td:first-child {
   }
   .filters > .button {
     width: 100%;
+    grid-column: 1 / -1;
+    margin-top: 8px;
   }
   .reset-link {
     align-self: center;
@@ -1012,15 +1092,15 @@ td:first-child {
     padding: 21px 17px;
   }
   .field-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 19px;
   }
   .pagination-wrap {
     overflow-x: auto;
   }
   .toast {
-    right: 12px;
-    top: 12px;
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    top: calc(12px + env(safe-area-inset-top, 0px));
   }
   .login-layout {
     display: flex;
@@ -1047,6 +1127,26 @@ td:first-child {
   }
   .login-form-wrap > .muted {
     margin-bottom: 25px;
+  }
+  .field input,
+  .field select,
+  .field textarea,
+  .search-field input,
+  .date-filter input {
+    font-size: 16px;
+  }
+  .modal-close {
+    height: 44px;
+    width: 44px;
+  }
+  .table-wrap,
+  .pagination-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+  @supports (min-height: 100dvh) {
+    .login-layout {
+      min-height: 100dvh;
+    }
   }
 }
 @media (max-width: 420px) {
@@ -1545,14 +1645,29 @@ td:first-child {
 body.modal-open {
   overflow: hidden;
 }
+.evaluation-modal,
+.document-preview-modal,
+.document-preview-content {
+  -webkit-overflow-scrolling: touch;
+}
+@supports (height: 100dvh) {
+  .evaluation-modal {
+    max-height: min(90dvh, 900px);
+  }
+  .document-preview-modal {
+    height: min(88dvh, 900px);
+  }
+}
 @media (max-width: 760px) {
   .monthly-progress-heading {
     align-items: flex-start;
     flex-direction: column;
+    gap: 16px; 
   }
   .archive-heading {
     align-items: flex-start;
     flex-direction: column;
+    gap: 16px;
   }
   .evaluation-accordion-list {
     margin: 0 18px 18px;
@@ -1565,7 +1680,10 @@ body.modal-open {
   }
   .evaluation-modal-backdrop {
     align-items: flex-end;
-    padding: 10px;
+    padding: max(10px, env(safe-area-inset-top, 0px))
+      max(10px, env(safe-area-inset-right, 0px))
+      max(10px, env(safe-area-inset-bottom, 0px))
+      max(10px, env(safe-area-inset-left, 0px));
   }
   .evaluation-modal {
     border-radius: 14px 14px 8px 8px;
@@ -1577,6 +1695,15 @@ body.modal-open {
     height: 92vh;
     max-height: 92vh;
     padding: 20px 16px;
+  }
+  @supports (height: 100dvh) {
+    .evaluation-modal {
+      max-height: 92dvh;
+    }
+    .document-preview-modal {
+      height: 92dvh;
+      max-height: 92dvh;
+    }
   }
   .document-preview-toolbar {
     flex-wrap: wrap;

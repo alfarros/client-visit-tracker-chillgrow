@@ -10,6 +10,7 @@ class EvaluasiBulanan extends Model
     protected $fillable = [
         'pasien_id',
         'periode_tanggal',
+        'refleks_primitif',
         'sensori',
         'motorik_kasar',
         'motorik_halus',
