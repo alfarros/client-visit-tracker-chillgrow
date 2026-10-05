@@ -1,14 +1,19 @@
 :root {
-  --ink: #1b2936;
-  --muted: #758391;
-  --line: #e7edf0;
+  --ink: #233b52;
+  --muted: #718398;
+  --line: #dce9f5;
   --surface: #fff;
-  --page: #f5f8f9;
-  --teal: #087f83;
-  --teal-dark: #076c70;
-  --teal-soft: #e8f6f5;
+  --page: #edf6ff;
+  --teal: #1f70b7;
+  --teal-dark: #185b96;
+  --teal-soft: #e4f1ff;
+  --green: #567a58;
+  --green-dark: #466a49;
+  --green-soft: #edf4ec;
+  --yellow: #edc94c;
+  --yellow-soft: #fff7d5;
   --red: #c84949;
-  --shadow: 0 10px 35px rgba(27, 41, 54, 0.055);
+  --shadow: 0 10px 35px rgba(38, 76, 112, 0.07);
   font-family:
     "DM Sans",
     system-ui,
@@ -66,7 +71,7 @@ a {
 }
 .brand-mark {
   align-items: center;
-  background: #087f83;
+  background: var(--teal);
   border-radius: 11px;
   color: #fff;
   display: inline-flex;
@@ -77,6 +82,14 @@ a {
   justify-content: center;
   letter-spacing: -0.6px;
   width: 37px;
+}
+.brand-logo {
+  border-radius: 10px;
+  display: block;
+  flex: 0 0 auto;
+  height: 48px;
+  object-fit: cover;
+  width: 48px;
 }
 .brand strong,
 .brand small {
@@ -122,11 +135,11 @@ a {
   width: 100%;
 }
 .nav-link:hover {
-  background: #f6faf9;
+  background: var(--teal-soft);
   color: var(--teal);
 }
 .nav-link.active {
-  background: #eaf6f5;
+  background: #d9ecff;
   color: var(--teal);
 }
 .nav-icon {
@@ -148,7 +161,7 @@ a {
 }
 .avatar {
   align-items: center;
-  background: #e9f3f3;
+  background: var(--teal-soft);
   border-radius: 50%;
   color: var(--teal);
   display: flex;
@@ -200,7 +213,7 @@ a {
   gap: 8px;
 }
 .status-dot {
-  background: #39a88b;
+  background: var(--green);
   border-radius: 50%;
   height: 7px;
   width: 7px;
@@ -278,8 +291,8 @@ a {
 }
 .metric-card {
   align-items: center;
-  background: linear-gradient(115deg, #fff 0%, #f9fdfc 100%);
-  border: 1px solid #e6eeec;
+  background: linear-gradient(115deg, #fff 0%, #f3f8fd 100%);
+  border: 1px solid #e0ebf4;
   border-radius: 12px;
   box-shadow: var(--shadow);
   display: flex;
@@ -412,16 +425,16 @@ td:first-child {
   padding: 5px 9px;
 }
 .badge-bpjs {
-  background: #eaf3ff;
-  color: #3875b4;
+  background: #e5f1fc;
+  color: #225f96;
 }
 .badge-umum {
   background: #eff2f4;
   color: #647480;
 }
 .badge-asuransi {
-  background: #e8f6ef;
-  color: #278261;
+  background: var(--green-soft);
+  color: var(--green-dark);
 }
 .cell-action {
   text-align: right;
@@ -437,7 +450,7 @@ td:first-child {
   padding: 5px 7px;
 }
 .icon-button:hover {
-  background: #eff8f7;
+  background: var(--teal-soft);
 }
 .danger-text {
   color: var(--red);
@@ -457,7 +470,7 @@ td:first-child {
 }
 .empty-icon {
   align-items: center;
-  background: #f0f7f6;
+  background: var(--teal-soft);
   border-radius: 50%;
   color: var(--teal);
   display: flex;
@@ -509,8 +522,8 @@ td:first-child {
 .field input:focus,
 .field select:focus,
 .date-filter input:focus {
-  border-color: #4eaaa5;
-  box-shadow: 0 0 0 3px rgba(8, 127, 131, 0.1);
+  border-color: #75aadb;
+  box-shadow: 0 0 0 3px rgba(31, 112, 183, 0.13);
   outline: 0;
 }
 .search-field input::placeholder {
@@ -674,9 +687,9 @@ td:first-child {
 }
 .toast {
   align-items: center;
-  background: #173b3a;
+  background: #194f7c;
   border-radius: 9px;
-  box-shadow: 0 12px 32px #183e3c2b;
+  box-shadow: 0 12px 32px rgba(24, 75, 119, 0.22);
   color: #fff;
   display: flex;
   gap: 11px;
@@ -693,7 +706,7 @@ td:first-child {
 }
 .toast-icon {
   align-items: center;
-  background: #43a88b;
+  background: var(--green);
   border-radius: 50%;
   display: inline-flex;
   font-size: 12px;
@@ -737,8 +750,8 @@ td:first-child {
   width: 45px;
 }
 .modal-icon.modal-icon-success {
-  background: #e7f5ef;
-  color: #268b70;
+  background: var(--green-soft);
+  color: var(--green-dark);
 }
 .confirm-modal h2 {
   font:
@@ -784,32 +797,32 @@ td:first-child {
   background:
     radial-gradient(
       ellipse at 10% 92%,
-      rgba(67, 172, 157, 0.3),
+      rgba(255, 255, 255, 0.42),
       transparent 45%
     ),
-    linear-gradient(145deg, #075d66, #087d80 58%, #168f87);
-  color: #fff;
+    linear-gradient(145deg, #9bcafa, #add8ff 58%, #9ccbf7);
+  color: #173f65;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 38px clamp(35px, 7vw, 105px);
 }
-.brand-light .brand-mark {
-  background: #ffffff24;
-  border: 1px solid #ffffff26;
+.brand-light .brand-logo {
+  box-shadow: 0 0 30px 2px #ffffff66;
+  border: 1px solid #ffffff66;
 }
 .brand-light small {
-  color: #c8e5e2;
+  color: #315f87;
 }
 .brand-light strong {
-  color: #fff;
+  color: #173f65;
 }
 .login-welcome {
   max-width: 450px;
   padding: 50px 0;
 }
 .light-eyebrow {
-  color: #b4dedb;
+  color: #315f87;
 }
 .login-welcome h1 {
   font:
@@ -819,12 +832,12 @@ td:first-child {
   margin: 15px 0;
 }
 .login-welcome p {
-  color: #cbe5e3;
+  color: #294f71;
   font-size: 15px;
   max-width: 340px;
 }
 .brand-panel-footer {
-  color: #b5d9d8;
+  color: #315f87;
   font-size: 11px;
 }
 .login-form-panel {
@@ -1160,20 +1173,20 @@ td:first-child {
   margin-top: 22px;
 }
 .badge-status-antre {
-  background: #fff5db;
-  color: #9c7014;
+  background: var(--yellow-soft);
+  color: #7b641a;
 }
 .badge-status-selesai {
-  background: #e8f6ef;
-  color: #278261;
+  background: var(--green-soft);
+  color: var(--green-dark);
 }
 .badge-status-batal {
   background: #fff0ef;
   color: #bc4c48;
 }
 .badge-status-berlangsung {
-  background: #e8f2ff;
-  color: #3375b3;
+  background: #e5f1fc;
+  color: #225f96;
 }
 .readonly-note {
   color: #8a969e;
@@ -1206,8 +1219,8 @@ td:first-child {
   width: 100%;
 }
 .field textarea:focus {
-  border-color: #4eaaa5;
-  box-shadow: 0 0 0 3px rgba(8, 127, 131, 0.1);
+  border-color: #75aadb;
+  box-shadow: 0 0 0 3px rgba(31, 112, 183, 0.13);
   outline: 0;
 }
 .field input:disabled,
@@ -1235,11 +1248,11 @@ td:first-child {
   }
 }
 .button-success {
-  background: #268b70;
+  background: var(--green);
   color: #fff;
 }
 .button-success:hover {
-  background: #20775f;
+  background: var(--green-dark);
 }
 .examination-panel {
   margin-top: 21px;
@@ -1634,7 +1647,7 @@ body.modal-open {
 }
 .action-menu-items a:hover,
 .action-menu-items button:hover {
-  background: #f1f7f6;
+  background: var(--teal-soft);
   color: var(--teal);
 }
 .action-menu-items .danger-text {
@@ -1702,9 +1715,9 @@ body.modal-open {
 }
 .row-actions .icon-button:hover,
 .row-actions .icon-button:focus-visible {
-  background: #f2f9f8;
-  border-color: #c8e2df;
-  box-shadow: 0 7px 16px rgba(8, 127, 131, 0.17);
+  background: var(--teal-soft);
+  border-color: #c6def2;
+  box-shadow: 0 7px 16px rgba(31, 112, 183, 0.17);
   transform: translateY(-2px);
 }
 .row-actions .icon-button:hover img,
@@ -1745,7 +1758,7 @@ body.modal-open {
 .action-menu .action-trigger:hover,
 .action-menu .action-trigger:focus-visible,
 .action-menu[open] .action-trigger {
-  background: #f1f7f6;
+  background: var(--teal-soft);
   border-color: transparent;
   box-shadow: none;
   transform: none;

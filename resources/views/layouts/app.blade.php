@@ -1,78 +1,93 @@
 <!doctype html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Client Visit Tracker') · Client Visit Tracker</title>
+    <title>@yield('title', 'Rekam Medis ChilGrow    ') · Rekam Medis ChilGrow</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
+
 <body>
-<div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-        <a class="brand" href="{{ route('dashboard') }}">
-            <span class="brand-mark" aria-hidden="true">CV</span>
-            <span><strong>Client Visit</strong><small>Tracker</small></span>
-        </a>
-        <div class="nav-label">MENU UTAMA</div>
-        <nav class="nav-list" aria-label="Navigasi utama">
-            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                <span class="nav-icon" aria-hidden="true">⌂</span> Dashboard
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="{{ route('dashboard') }}">
+                <img class="brand-logo" src="{{ asset('icons/chilgrow.jpg') }}" alt="ChilGrow">
+                <span><strong>Rekam Medis</strong><small>ChilGrow</small></span>
             </a>
-            <a class="nav-link {{ request()->routeIs('pasien.*') ? 'active' : '' }}" href="{{ route('pasien.index') }}">
-                <span class="nav-icon" aria-hidden="true">♙</span> Pasien
-            </a>
-            <a class="nav-link {{ request()->routeIs('kunjungan.*') ? 'active' : '' }}" href="{{ route('kunjungan.index') }}">
-                <span class="nav-icon" aria-hidden="true">▤</span> Kunjungan
-            </a>
-        </nav>
-        <div class="sidebar-bottom">
-            <div class="profile-chip"><span class="avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></span></div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="nav-link logout-link" type="submit"><span class="nav-icon" aria-hidden="true">↪</span> Keluar</button>
-            </form>
-        </div>
-    </aside>
+            <div class="nav-label">MENU UTAMA</div>
+            <nav class="nav-list" aria-label="Navigasi utama">
+                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    href="{{ route('dashboard') }}">
+                    <span class="nav-icon" aria-hidden="true">⌂</span> Dashboard
+                </a>
+                <a class="nav-link {{ request()->routeIs('pasien.*') ? 'active' : '' }}"
+                    href="{{ route('pasien.index') }}">
+                    <span class="nav-icon" aria-hidden="true">♙</span> Pasien
+                </a>
+                <a class="nav-link {{ request()->routeIs('kunjungan.*') ? 'active' : '' }}"
+                    href="{{ route('kunjungan.index') }}">
+                    <span class="nav-icon" aria-hidden="true">▤</span> Kunjungan
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="profile-chip"><span
+                        class="avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></span>
+                </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="nav-link logout-link" type="submit"><span class="nav-icon"
+                            aria-hidden="true">↪</span> Keluar</button>
+                </form>
+            </div>
+        </aside>
 
-    <main class="main-area">
-        <header class="topbar">
-            <button class="menu-toggle" type="button" aria-label="Buka navigasi" aria-expanded="false" aria-controls="sidebar">☰</button>
-            <span class="topbar-title">@yield('eyebrow', 'Operasional Klinik')</span>
-            <div class="topbar-user"><span class="status-dot"></span>{{ auth()->user()->name }}</div>
-        </header>
-        <div class="page-content">
-            @yield('content')
-        </div>
-    </main>
-</div>
+        <main class="main-area">
+            <header class="topbar">
+                <button class="menu-toggle" type="button" aria-label="Buka navigasi" aria-expanded="false"
+                    aria-controls="sidebar">☰</button>
+                <span class="topbar-title">@yield('eyebrow', 'Operasional Klinik')</span>
+                <div class="topbar-user"><span class="status-dot"></span>{{ auth()->user()->name }}</div>
+            </header>
+            <div class="page-content">
+                @yield('content')
+            </div>
+        </main>
+    </div>
 
-<div class="toast" role="status" aria-live="polite" data-toast hidden>
-    <span class="toast-icon" aria-hidden="true" data-toast-icon>✓</span><span data-toast-message></span>
-</div>
+    <div class="toast" role="status" aria-live="polite" data-toast hidden>
+        <span class="toast-icon" aria-hidden="true" data-toast-icon>✓</span><span data-toast-message></span>
+    </div>
 
-<div class="modal-backdrop" data-delete-modal hidden>
-    <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-description">
-        <div class="modal-icon" aria-hidden="true" data-confirm-icon>!</div>
-        <h2 id="confirm-title" data-confirm-title>Hapus data ini?</h2>
-        <p id="confirm-description" data-confirm-description>Data yang dipilih akan dihapus.</p>
-        <div class="modal-actions">
-            <button class="button button-secondary" type="button" data-delete-cancel>Batal</button>
-            <form method="POST" data-delete-form>
-                @csrf
-                @method('DELETE')
-                <button class="button button-danger" type="submit" data-confirm-submit>Hapus</button>
-            </form>
-        </div>
-    </section>
-</div>
+    <div class="modal-backdrop" data-delete-modal hidden>
+        <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title"
+            aria-describedby="confirm-description">
+            <div class="modal-icon" aria-hidden="true" data-confirm-icon>!</div>
+            <h2 id="confirm-title" data-confirm-title>Hapus data ini?</h2>
+            <p id="confirm-description" data-confirm-description>Data yang dipilih akan dihapus.</p>
+            <div class="modal-actions">
+                <button class="button button-secondary" type="button" data-delete-cancel>Batal</button>
+                <form method="POST" data-delete-form>
+                    @csrf
+                    @method('DELETE')
+                    <button class="button button-danger" type="submit" data-confirm-submit>Hapus</button>
+                </form>
+            </div>
+        </section>
+    </div>
 
-<script src="{{ asset('js/app.js') }}" defer></script>
-@if (session('success'))
-    <script>document.addEventListener('DOMContentLoaded', () => window.showTrackerToast(@js(session('success'))));</script>
-@endif
-@if (session('error'))
-    <script>document.addEventListener('DOMContentLoaded', () => window.showTrackerToast(@js(session('error')), 'error'));</script>
-@endif
+    <script src="{{ asset('js/app.js') }}" defer></script>
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => window.showTrackerToast(@js(session('success'))));
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => window.showTrackerToast(@js(session('error')), 'error'));
+        </script>
+    @endif
 </body>
+
 </html>
