@@ -1271,6 +1271,7 @@ td:first-child {
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 .exam-tab {
   background: transparent;
@@ -1297,24 +1298,21 @@ td:first-child {
 .exam-tab-panel[hidden] {
   display: none;
 }
-.monthly-progress-panel {
-  padding-bottom: 4px;
+.progress-panel,
+.archive-panel {
+  margin-top: 21px;
+}
+.progress-panel {
+  padding: 0;
 }
 .monthly-progress-heading {
   align-items: center;
-  margin-bottom: 18px;
-}
-.monthly-progress-heading h2 {
-  color: #354550;
-  font-size: 15px;
-  margin: 0 0 5px;
-}
-.monthly-progress-heading p {
-  margin: 0;
+  margin-bottom: 0;
 }
 .evaluation-accordion-list {
   display: grid;
   gap: 12px;
+  margin: 0 24px 24px;
 }
 .evaluation-accordion {
   background: #fff;
@@ -1401,6 +1399,82 @@ td:first-child {
   padding: 25px;
   width: 100%;
 }
+.document-preview-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(10, 35, 43, 0.24);
+  display: flex;
+  flex-direction: column;
+  height: min(88vh, 900px);
+  max-width: 1100px;
+  overflow: hidden;
+  padding: 25px;
+  width: 100%;
+}
+.document-preview-modal .evaluation-modal-heading {
+  flex: 0 0 auto;
+}
+.document-preview-modal .evaluation-modal-heading h2 {
+  overflow-wrap: anywhere;
+}
+.document-preview-modal [hidden] {
+  display: none !important;
+}
+.document-preview-toolbar {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+.document-preview-toolbar [data-pdf-page-indicator] {
+  color: #53646d;
+  font-size: 12px;
+  min-width: 105px;
+  text-align: center;
+}
+.document-preview-toolbar-spacer {
+  flex: 1 1 auto;
+}
+.document-preview-content {
+  align-items: center;
+  background: #f2f5f6;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  min-height: 0;
+  overflow: auto;
+}
+.document-preview-content [hidden] {
+  display: none !important;
+}
+.document-preview-status {
+  color: #53646d;
+  font-size: 13px;
+  margin: 20px;
+  text-align: center;
+}
+.document-preview-canvas {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(30, 50, 58, 0.16);
+  flex: 0 0 auto;
+  margin: auto;
+}
+.document-preview-content img {
+  display: block;
+  height: auto;
+  margin: auto;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
+}
+.document-preview-content > .button {
+  margin: 20px;
+}
 .evaluation-modal-heading {
   align-items: flex-start;
   border-bottom: 1px solid var(--line);
@@ -1434,6 +1508,27 @@ td:first-child {
 .evaluation-form .field textarea {
   min-height: 88px;
 }
+.document-modal .field input[type="file"] {
+  height: auto;
+  padding: 10px;
+}
+.archive-heading {
+  align-items: center;
+  margin-bottom: 0;
+}
+.document-filename {
+  max-width: 360px;
+  overflow-wrap: anywhere;
+}
+.document-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 250px;
+}
+.document-actions .button {
+  text-decoration: none;
+}
 body.modal-open {
   overflow: hidden;
 }
@@ -1441,6 +1536,16 @@ body.modal-open {
   .monthly-progress-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+  .archive-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .evaluation-accordion-list {
+    margin: 0 18px 18px;
+  }
+  .document-actions {
+    min-width: 0;
   }
   .evaluation-aspects {
     grid-template-columns: 1fr;
@@ -1453,6 +1558,18 @@ body.modal-open {
     border-radius: 14px 14px 8px 8px;
     max-height: 92vh;
     padding: 20px 16px;
+  }
+  .document-preview-modal {
+    border-radius: 14px 14px 8px 8px;
+    height: 92vh;
+    max-height: 92vh;
+    padding: 20px 16px;
+  }
+  .document-preview-toolbar {
+    flex-wrap: wrap;
+  }
+  .document-preview-toolbar-spacer {
+    display: none;
   }
 }
 .empty-examination {

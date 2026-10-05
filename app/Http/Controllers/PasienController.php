@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pasien;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class PasienController extends Controller
@@ -47,6 +48,7 @@ class PasienController extends Controller
         $pasien = Pasien::with([
             'kunjungan' => fn ($query) => $query->orderByDesc('tanggal_kunjungan'),
             'evaluasiBulanan' => fn ($query) => $query->orderByDesc('periode_tanggal'),
+            'dokumenPasien' => fn ($query) => $query->latest(),
         ])->findOrFail($id);
 
         $kunjunganDiminta = $request->filled('kunjungan')
@@ -96,6 +98,7 @@ class PasienController extends Controller
             return redirect()->route('pasien.index')->with('error', 'Pasien yang memiliki riwayat kunjungan tidak dapat dihapus.');
         }
 
+        Storage::disk('private')->delete($pasien->dokumenPasien()->pluck('file_path')->all());
         $pasien->delete();
 
         return redirect()->route('pasien.index')->with('success', 'Data pasien berhasil dihapus.');

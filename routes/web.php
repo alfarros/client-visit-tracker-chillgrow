@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CpptController;
+use App\Http\Controllers\DokumenPasienController;
 use App\Http\Controllers\EvaluasiBulananController;
 use App\Http\Controllers\KunjunganKlienController;
 use App\Http\Controllers\PasienController;
@@ -21,6 +22,10 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('pasien', PasienController::class)->except(['destroy']);
+    Route::post('/pasien/{pasien}/dokumen', [DokumenPasienController::class, 'store'])->name('pasien.dokumen.store');
+    Route::get('/pasien/{pasien}/dokumen/{dokumenPasien}/preview', [DokumenPasienController::class, 'preview'])->name('pasien.dokumen.preview');
+    Route::get('/pasien/{pasien}/dokumen/{dokumenPasien}/download', [DokumenPasienController::class, 'download'])->name('pasien.dokumen.download');
+    Route::delete('/pasien/{pasien}/dokumen/{dokumenPasien}', [DokumenPasienController::class, 'destroy'])->name('pasien.dokumen.destroy');
     Route::post('/evaluasi-bulanan', [EvaluasiBulananController::class, 'store'])->name('evaluasi-bulanan.store');
     Route::put('/evaluasi-bulanan/{evaluasiBulanan}', [EvaluasiBulananController::class, 'update'])->name('evaluasi-bulanan.update');
     Route::delete('/evaluasi-bulanan/{evaluasiBulanan}', [EvaluasiBulananController::class, 'destroy'])->name('evaluasi-bulanan.destroy');

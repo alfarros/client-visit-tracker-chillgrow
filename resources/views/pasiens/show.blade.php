@@ -70,8 +70,6 @@
                     Program Terapi</button>
                 <button class="exam-tab" id="tab-cppt" type="button" role="tab" aria-selected="false"
                     aria-controls="panel-cppt" data-tab-target="panel-cppt">CPPT</button>
-                <button class="exam-tab" id="tab-progres-bulanan" type="button" role="tab" aria-selected="false"
-                    aria-controls="panel-progres-bulanan" data-tab-target="panel-progres-bulanan">Progres Bulanan</button>
             </div>
             @if ($kunjunganAktif)
             <div class="exam-tab-panel" id="panel-program-terapi" role="tabpanel" aria-labelledby="tab-program-terapi">
@@ -152,10 +150,12 @@
                 </div>
             @endif
 
-            <div class="exam-tab-panel monthly-progress-panel" id="panel-progres-bulanan" role="tabpanel" aria-labelledby="tab-progres-bulanan" hidden>
+        </section>
+
+        <section class="panel progress-panel monthly-progress-panel" id="progres-bulanan">
                 <div class="panel-heading monthly-progress-heading">
-                    <div><h2>Evaluasi Bulanan</h2><p class="muted">Catat perkembangan pasien pada lima aspek terapi.</p></div>
-                    <button class="button button-primary" type="button" data-evaluation-open>＋ Tambah Evaluasi</button>
+                    <div><h2>Riwayat Progres Bulanan</h2><p class="muted">Catat perkembangan pasien pada lima aspek terapi.</p></div>
+                    <button class="button button-secondary" type="button" data-evaluation-open>＋ Tambah Evaluasi</button>
                 </div>
 
                 @if ($pasien->evaluasiBulanan->isEmpty())
@@ -195,7 +195,6 @@
                         @endforeach
                     </div>
                 @endif
-            </div>
         </section>
 
         <div class="modal-backdrop evaluation-modal-backdrop" data-evaluation-modal @if ($errors->hasAny(['pasien_id', 'periode_tanggal', 'sensori', 'motorik_kasar', 'motorik_halus', 'kognitif_perseptual', 'kemandirian'])) data-reopen="true" @endif data-edit-id="{{ old('evaluasi_id') }}" hidden>
@@ -224,6 +223,95 @@
                     @endforeach
                     <div class="form-actions"><button class="button button-secondary" type="button" data-evaluation-close>Batal</button><button class="button button-primary" type="submit" data-evaluation-submit>Simpan Evaluasi</button></div>
                 </form>
+            </section>
+        </div>
+
+        <section class="panel archive-panel">
+            <div class="panel-heading archive-heading">
+                <div><h2>Arsip Dokumen Medis</h2><p class="muted">Simpan asesmen dan dokumen pendukung pasien.</p></div>
+                <button class="button button-primary" type="button" data-document-open>＋ Upload Berkas</button>
+            </div>
+            @if ($pasien->dokumenPasien->isEmpty())
+                <div class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong>Belum ada dokumen medis</strong>
+                    <p>Asesmen dan dokumen pasien yang diunggah akan tercatat di sini.</p></div>
+            @else
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tanggal</th><th>Jenis</th><th>Nama File</th><th>Aksi</th></tr></thead>
+                        <tbody>
+                            @foreach ($pasien->dokumenPasien as $dokumen)
+                                <tr>
+                                    <td>{{ $dokumen->created_at->locale('id')->translatedFormat('d F Y') }}</td>
+                                    <td>{{ $dokumen->jenis_dokumen }}</td>
+                                    <td class="document-filename">{{ $dokumen->nama_file_asli }}</td>
+                                    <td class="document-actions">
+                                        <button class="button button-secondary button-small" type="button" data-document-preview
+                                            data-preview-url="{{ route('pasien.dokumen.preview', [$pasien, $dokumen]) }}"
+                                            data-download-url="{{ route('pasien.dokumen.download', [$pasien, $dokumen]) }}"
+                                            data-preview-name="{{ $dokumen->nama_file_asli }}"
+                                            data-preview-type="{{ strtolower(pathinfo($dokumen->nama_file_asli, PATHINFO_EXTENSION)) }}">Preview</button>
+                                        <a class="button button-secondary button-small" href="{{ route('pasien.dokumen.download', [$pasien, $dokumen]) }}">Download</a>
+                                        <button class="button button-danger button-small" type="button" data-delete-trigger
+                                            data-action="{{ route('pasien.dokumen.destroy', [$pasien, $dokumen]) }}"
+                                            data-name="dokumen {{ $dokumen->jenis_dokumen }} — {{ $dokumen->nama_file_asli }}">Hapus</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </section>
+
+        <div class="modal-backdrop evaluation-modal-backdrop" data-document-modal @if ($errors->hasAny(['jenis_dokumen', 'dokumen'])) data-reopen="true" @endif hidden>
+            <section class="evaluation-modal document-modal" role="dialog" aria-modal="true" aria-labelledby="document-modal-title">
+                <div class="evaluation-modal-heading"><div><span class="eyebrow">ARSIP PASIEN</span><h2 id="document-modal-title">Upload Dokumen Medis</h2></div>
+                    <button class="modal-close" type="button" aria-label="Tutup" data-document-close>×</button></div>
+                <form method="POST" action="{{ route('pasien.dokumen.store', $pasien) }}" enctype="multipart/form-data" class="form-stack evaluation-form">
+                    @csrf
+                    <div class="field"><label for="jenis_dokumen">Jenis Dokumen</label>
+                        <select id="jenis_dokumen" name="jenis_dokumen" required>
+                            <option value="">Pilih jenis dokumen</option>
+                            @foreach (\App\Models\DokumenPasien::JENIS_DOKUMEN as $jenis)
+                                <option value="{{ $jenis }}" @selected(old('jenis_dokumen') === $jenis)>{{ $jenis }}</option>
+                            @endforeach
+                        </select>
+                        @error('jenis_dokumen')<p class="field-error">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="field"><label for="dokumen">Berkas (PDF, JPG, PNG · maks. 10 MB)</label>
+                        <input id="dokumen" name="dokumen" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required>
+                        @error('dokumen')<p class="field-error">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="form-actions"><button class="button button-secondary" type="button" data-document-close>Batal</button><button class="button button-primary" type="submit">Upload Berkas</button></div>
+                </form>
+            </section>
+        </div>
+
+        <div class="modal-backdrop evaluation-modal-backdrop document-preview-backdrop" data-document-preview-modal
+            data-pdfjs-module="{{ asset('vendor/pdfjs/build/pdf.min.mjs') }}"
+            data-pdfjs-worker="{{ asset('vendor/pdfjs/build/pdf.worker.min.mjs') }}"
+            data-pdfjs-cmaps="{{ rtrim(asset('vendor/pdfjs/cmaps'), '/') }}/"
+            data-pdfjs-fonts="{{ rtrim(asset('vendor/pdfjs/standard_fonts'), '/') }}/"
+            data-pdfjs-wasm="{{ rtrim(asset('vendor/pdfjs/wasm'), '/') }}/" hidden>
+            <section class="document-preview-modal" role="dialog" aria-modal="true" aria-labelledby="document-preview-title">
+                <div class="evaluation-modal-heading">
+                    <div><span class="eyebrow">ARSIP PASIEN</span><h2 id="document-preview-title" data-document-preview-title>Preview Dokumen</h2></div>
+                    <button class="modal-close" type="button" aria-label="Tutup preview" data-document-preview-close>×</button>
+                </div>
+                <div class="document-preview-toolbar" data-document-preview-pdf-controls hidden>
+                    <button class="button button-secondary button-small" type="button" data-pdf-page-prev disabled>‹ Sebelumnya</button>
+                    <span data-pdf-page-indicator>Halaman 1 dari 1</span>
+                    <button class="button button-secondary button-small" type="button" data-pdf-page-next disabled>Berikutnya ›</button>
+                    <span class="document-preview-toolbar-spacer"></span>
+                    <button class="button button-secondary button-small" type="button" data-pdf-zoom-out aria-label="Perkecil" disabled>−</button>
+                    <button class="button button-secondary button-small" type="button" data-pdf-zoom-in aria-label="Perbesar" disabled>+</button>
+                </div>
+                <div class="document-preview-content">
+                    <p class="document-preview-status" data-document-preview-status role="status">Memuat preview dokumen…</p>
+                    <canvas class="document-preview-canvas" data-document-preview-canvas aria-label="Halaman PDF" hidden></canvas>
+                    <img data-document-preview-image alt="Preview dokumen medis" hidden>
+                    <a class="button button-secondary" data-document-preview-download hidden>Unduh dokumen</a>
+                </div>
             </section>
         </div>
 

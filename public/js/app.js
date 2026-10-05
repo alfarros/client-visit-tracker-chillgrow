@@ -190,6 +190,241 @@
         openEvaluationModal(evaluation, Boolean(evaluation));
     }
 
+    const documentModal = document.querySelector('[data-document-modal]');
+    const documentOpenButton = document.querySelector('[data-document-open]');
+    const documentCloseButtons = [...document.querySelectorAll('[data-document-close]')];
+    const documentPreviewModal = document.querySelector('[data-document-preview-modal]');
+    const documentPreviewButtons = [...document.querySelectorAll('[data-document-preview]')];
+    const documentPreviewCloseButtons = [...document.querySelectorAll('[data-document-preview-close]')];
+    const documentPreviewTitle = document.querySelector('[data-document-preview-title]');
+    const documentPreviewCanvas = document.querySelector('[data-document-preview-canvas]');
+    const documentPreviewImage = document.querySelector('[data-document-preview-image]');
+    const documentPreviewStatus = document.querySelector('[data-document-preview-status]');
+    const documentPreviewDownload = document.querySelector('[data-document-preview-download]');
+    const documentPreviewControls = document.querySelector('[data-document-preview-pdf-controls]');
+    const documentPreviewPageIndicator = document.querySelector('[data-pdf-page-indicator]');
+    const documentPreviewPagePrev = document.querySelector('[data-pdf-page-prev]');
+    const documentPreviewPageNext = document.querySelector('[data-pdf-page-next]');
+    const documentPreviewZoomOut = document.querySelector('[data-pdf-zoom-out]');
+    const documentPreviewZoomIn = document.querySelector('[data-pdf-zoom-in]');
+    let documentPreviewLastFocused = null;
+    let documentPreviewObjectUrl = null;
+    let documentPreviewRequestId = 0;
+    let pdfJsPromise = null;
+    let pdfLoadingTask = null;
+    let pdfDocument = null;
+    let pdfRenderTask = null;
+    let pdfCurrentPage = 1;
+    let pdfZoom = 1;
+    const openDocumentModal = () => {
+        if (!documentModal) return;
+        documentModal.hidden = false;
+        document.body.classList.add('modal-open');
+        documentModal.querySelector('select, input[type="file"], button')?.focus();
+    };
+    const closeDocumentModal = () => {
+        if (!documentModal) return;
+        documentModal.hidden = true;
+        document.body.classList.remove('modal-open');
+        documentOpenButton?.focus();
+    };
+
+    documentOpenButton?.addEventListener('click', openDocumentModal);
+    documentCloseButtons.forEach((button) => button.addEventListener('click', closeDocumentModal));
+    documentModal?.addEventListener('click', (event) => {
+        if (event.target === documentModal) closeDocumentModal();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && documentModal && !documentModal.hidden) closeDocumentModal();
+    });
+    if (documentModal?.dataset.reopen === 'true') openDocumentModal();
+
+    const disposePdfPreview = () => {
+        pdfRenderTask?.cancel();
+        pdfRenderTask = null;
+        if (pdfLoadingTask) pdfLoadingTask.destroy().catch(() => {});
+        pdfLoadingTask = null;
+        pdfDocument = null;
+        if (documentPreviewCanvas) {
+            documentPreviewCanvas.width = 0;
+            documentPreviewCanvas.height = 0;
+        }
+    };
+    const updatePdfControls = () => {
+        if (!pdfDocument) return;
+        documentPreviewPageIndicator.textContent = `Halaman ${pdfCurrentPage} dari ${pdfDocument.numPages}`;
+        documentPreviewPagePrev.disabled = pdfCurrentPage <= 1;
+        documentPreviewPageNext.disabled = pdfCurrentPage >= pdfDocument.numPages;
+        documentPreviewZoomOut.disabled = pdfZoom <= 0.75;
+        documentPreviewZoomIn.disabled = pdfZoom >= 1.5;
+    };
+    const renderPdfPage = async (requestId) => {
+        if (!pdfDocument || !documentPreviewCanvas) return;
+        pdfRenderTask?.cancel();
+        if (pdfRenderTask) {
+            try { await pdfRenderTask.promise; } catch (error) {
+                if (error?.name !== 'RenderingCancelledException') throw error;
+            }
+        }
+        if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+
+        const page = await pdfDocument.getPage(pdfCurrentPage);
+        if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+        const baseViewport = page.getViewport({ scale: 1 });
+        const availableWidth = Math.max(220, document.querySelector('.document-preview-content').clientWidth - 32);
+        const fitScale = Math.min(availableWidth / baseViewport.width, 1.25);
+        const viewport = page.getViewport({ scale: fitScale * pdfZoom });
+        const outputScale = Math.min(window.devicePixelRatio || 1, 1.5);
+        const canvas = documentPreviewCanvas;
+        const context = canvas.getContext('2d', { alpha: false });
+
+        canvas.width = Math.floor(viewport.width * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+        canvas.style.width = `${Math.floor(viewport.width)}px`;
+        canvas.style.height = `${Math.floor(viewport.height)}px`;
+        pdfRenderTask = page.render({
+            canvasContext: context,
+            viewport,
+            transform: outputScale === 1 ? null : [outputScale, 0, 0, outputScale, 0, 0],
+            background: '#ffffff',
+        });
+        await pdfRenderTask.promise;
+        pdfRenderTask = null;
+        page.cleanup();
+        if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+        documentPreviewCanvas.hidden = false;
+        documentPreviewStatus.hidden = true;
+        updatePdfControls();
+    };
+    const closeDocumentPreview = () => {
+        if (!documentPreviewModal) return;
+        documentPreviewModal.hidden = true;
+        documentPreviewRequestId++;
+        disposePdfPreview();
+        documentPreviewCanvas.hidden = true;
+        if (documentPreviewImage) documentPreviewImage.removeAttribute('src');
+        documentPreviewImage.hidden = true;
+        documentPreviewControls.hidden = true;
+        documentPreviewDownload.hidden = true;
+        if (documentPreviewObjectUrl) URL.revokeObjectURL(documentPreviewObjectUrl);
+        documentPreviewObjectUrl = null;
+        document.body.classList.remove('modal-open');
+        documentPreviewLastFocused?.focus();
+    };
+    documentPreviewButtons.forEach((button) => button.addEventListener('click', async () => {
+        if (!documentPreviewModal || !documentPreviewCanvas || !documentPreviewImage) return;
+        documentPreviewLastFocused = button;
+        const { previewUrl, previewName, downloadUrl } = button.dataset;
+        const requestId = ++documentPreviewRequestId;
+        documentPreviewTitle.textContent = previewName || 'Preview Dokumen';
+        disposePdfPreview();
+        documentPreviewCanvas.hidden = true;
+        documentPreviewImage.hidden = true;
+        documentPreviewImage.removeAttribute('src');
+        documentPreviewControls.hidden = true;
+        documentPreviewDownload.href = downloadUrl || previewUrl;
+        documentPreviewDownload.hidden = true;
+        documentPreviewStatus.textContent = 'Memuat preview dokumen…';
+        documentPreviewStatus.hidden = false;
+        documentPreviewModal.hidden = false;
+        document.body.classList.add('modal-open');
+        documentPreviewModal.querySelector('[data-document-preview-close]')?.focus();
+
+        if (documentPreviewObjectUrl) URL.revokeObjectURL(documentPreviewObjectUrl);
+        documentPreviewObjectUrl = null;
+        try {
+            const extension = (button.dataset.previewType || '').toLowerCase();
+            if (extension === 'pdf') {
+                pdfJsPromise ??= import(documentPreviewModal.dataset.pdfjsModule);
+                const pdfjsLib = await pdfJsPromise;
+                if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+                pdfjsLib.GlobalWorkerOptions.workerSrc = documentPreviewModal.dataset.pdfjsWorker;
+                pdfCurrentPage = 1;
+                pdfZoom = 1;
+                pdfLoadingTask = pdfjsLib.getDocument({
+                    url: previewUrl,
+                    cMapUrl: documentPreviewModal.dataset.pdfjsCmaps,
+                    cMapPacked: true,
+                    standardFontDataUrl: documentPreviewModal.dataset.pdfjsFonts,
+                    wasmUrl: documentPreviewModal.dataset.pdfjsWasm,
+                    maxImageSize: 16_000_000,
+                });
+                pdfDocument = await pdfLoadingTask.promise;
+                if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) {
+                    disposePdfPreview();
+                    return;
+                }
+                documentPreviewControls.hidden = false;
+                await renderPdfPage(requestId);
+                return;
+            }
+
+            const response = await fetch(previewUrl, { credentials: 'same-origin', cache: 'no-store' });
+            if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+            if (!response.ok) throw new Error('Gagal mengambil dokumen.');
+            const file = await response.blob();
+            if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+            const mimeType = file.type.toLowerCase();
+            if (!['image/jpeg', 'image/png'].includes(mimeType)) {
+                throw new Error('Format dokumen ini belum dapat ditampilkan. Silakan unduh dokumennya.');
+            }
+
+            documentPreviewObjectUrl = URL.createObjectURL(file);
+            documentPreviewStatus.hidden = true;
+            documentPreviewImage.src = documentPreviewObjectUrl;
+            documentPreviewImage.hidden = false;
+        } catch (error) {
+            if (requestId !== documentPreviewRequestId || documentPreviewModal.hidden) return;
+            disposePdfPreview();
+            documentPreviewCanvas.hidden = true;
+            documentPreviewControls.hidden = true;
+            documentPreviewStatus.textContent = error.message || 'Preview gagal dimuat. Silakan unduh dokumennya.';
+            documentPreviewDownload.hidden = false;
+        }
+    }));
+    documentPreviewPagePrev?.addEventListener('click', async () => {
+        if (!pdfDocument || pdfCurrentPage <= 1) return;
+        pdfCurrentPage--;
+        documentPreviewCanvas.hidden = true;
+        documentPreviewStatus.textContent = 'Memuat halaman…';
+        documentPreviewStatus.hidden = false;
+        try { await renderPdfPage(documentPreviewRequestId); } catch (error) {
+            documentPreviewStatus.textContent = 'Halaman PDF gagal ditampilkan.';
+            documentPreviewCanvas.hidden = true;
+        }
+    });
+    documentPreviewPageNext?.addEventListener('click', async () => {
+        if (!pdfDocument || pdfCurrentPage >= pdfDocument.numPages) return;
+        pdfCurrentPage++;
+        documentPreviewCanvas.hidden = true;
+        documentPreviewStatus.textContent = 'Memuat halaman…';
+        documentPreviewStatus.hidden = false;
+        try { await renderPdfPage(documentPreviewRequestId); } catch (error) {
+            documentPreviewStatus.textContent = 'Halaman PDF gagal ditampilkan.';
+            documentPreviewCanvas.hidden = true;
+        }
+    });
+    const changePdfZoom = async (direction) => {
+        if (!pdfDocument) return;
+        pdfZoom = Math.max(0.75, Math.min(1.5, pdfZoom + direction * 0.25));
+        documentPreviewCanvas.hidden = true;
+        documentPreviewStatus.textContent = 'Menyesuaikan tampilan…';
+        documentPreviewStatus.hidden = false;
+        try { await renderPdfPage(documentPreviewRequestId); } catch (error) {
+            documentPreviewStatus.textContent = 'Tampilan PDF gagal diperbarui.';
+            documentPreviewCanvas.hidden = true;
+        }
+    };
+    documentPreviewZoomOut?.addEventListener('click', () => changePdfZoom(-1));
+    documentPreviewZoomIn?.addEventListener('click', () => changePdfZoom(1));
+    documentPreviewCloseButtons.forEach((button) => button.addEventListener('click', closeDocumentPreview));
+    documentPreviewModal?.addEventListener('click', (event) => {
+        if (event.target === documentPreviewModal) closeDocumentPreview();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && documentPreviewModal && !documentPreviewModal.hidden) closeDocumentPreview();
+    });
+
     const actionMenus = [...document.querySelectorAll('.action-menu')];
     const placeActionMenu = (details) => {
         if (!details.open) return;

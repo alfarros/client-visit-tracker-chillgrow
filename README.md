@@ -9,6 +9,7 @@ Aplikasi internal MVP untuk mencatat jadwal kunjungan klien terapi okupasi. Lara
 - Periksa Pasien dengan pencarian nama/No. RM, profil, tab Lembar Program Terapi dan CPPT, serta riwayat kunjungan.
 - Tabel kunjungan dengan pencarian Nama/No. RM, filter rentang tanggal, status, dan pagination.
 - Status berubah otomatis dari `Antre` ke `Berlangsung` saat jam jadwal terapi tiba; aksi Selesaikan Terapi mengunci Program Terapi dan CPPT setelah keduanya tersimpan.
+- Riwayat Progres Bulanan dengan CRUD lima aspek dan Arsip Dokumen Medis privat (PDF/JPG/PNG hingga 10 MB) dengan preview, download, dan hapus.
 - Tambah, edit, serta hapus dengan dialog konfirmasi. Hapus ubahdibatasi untuk role `admin`.
 - Nomor RM disimpan sebagai teks, termasuk nol di awal.
 

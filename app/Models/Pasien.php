@@ -23,4 +23,9 @@ class Pasien extends Model
     {
         return $this->hasMany(EvaluasiBulanan::class);
     }
+
+    public function dokumenPasien(): HasMany
+    {
+        return $this->hasMany(DokumenPasien::class);
+    }
 }

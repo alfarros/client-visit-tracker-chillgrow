@@ -29,7 +29,7 @@ class EvaluasiBulananController extends Controller
         $evaluasiBulanan->delete();
 
         return redirect()
-            ->route('pasien.show', ['pasien' => $pasienId, 'tab' => 'progres-bulanan'])
+            ->to(route('pasien.show', $pasienId).'#progres-bulanan')
             ->with('success', 'Evaluasi bulanan berhasil dihapus.');
     }
 
@@ -75,7 +75,7 @@ class EvaluasiBulananController extends Controller
     private function redirectToProgress(EvaluasiBulanan $evaluasiBulanan, string $message): RedirectResponse
     {
         return redirect()
-            ->route('pasien.show', ['pasien' => $evaluasiBulanan->pasien_id, 'tab' => 'progres-bulanan'])
+            ->to(route('pasien.show', $evaluasiBulanan->pasien_id).'#progres-bulanan')
             ->with('success', $message);
     }
 }
