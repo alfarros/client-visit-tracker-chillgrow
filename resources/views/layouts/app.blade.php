@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Rekam Medis ChilGrow    ') · Rekam Medis ChilGrow</title>
+    <title>@yield('title', 'Electronic Medical Record ChilGrow    ') · EMR ChilGrow</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
@@ -14,7 +14,7 @@
         <aside class="sidebar" id="sidebar">
             <a class="brand" href="{{ route('dashboard') }}">
                 <img class="brand-logo" src="{{ asset('icons/chilgrow.jpg') }}" alt="ChilGrow">
-                <span><strong>Rekam Medis</strong><small>ChilGrow</small></span>
+                <span><strong>Electronic Medical Record</strong><small>ChilGrow</small></span>
             </a>
             <div class="nav-label">MENU UTAMA</div>
             <nav class="nav-list" aria-label="Navigasi utama">

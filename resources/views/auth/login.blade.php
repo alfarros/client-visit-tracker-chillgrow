@@ -13,7 +13,7 @@
     <main class="login-layout">
         <section class="login-brand-panel">
             <div class="brand brand-light"><img class="brand-logo" src="{{ asset('icons/chilgrow.jpg') }}"
-                    alt="ChilGrow"><span><strong>Rekam Medis</strong><small>ChilGrow</small></span></div>
+                    alt="ChilGrow"><span><strong>Electronic Medical Record</strong><small>ChilGrow</small></span></div>
             <div class="login-welcome"><span class="eyebrow light-eyebrow">OPERASIONAL TERAPI OKUPASI</span>
                 <h1>Jadwal kunjungan, lebih tertata.</h1>
                 <p>Catat dan temukan jadwal kunjungan klien dengan mudah.</p>
@@ -23,7 +23,7 @@
         <section class="login-form-panel">
             <div class="login-form-wrap">
                 <div class="mobile-login-brand brand"><img class="brand-logo" src="{{ asset('icons/chilgrow.jpg') }}"
-                        alt="ChilGrow"><span><strong>Rekam Medis</strong><small>ChilGrow</small></span></div>
+                        alt="ChilGrow"><span><strong>Electronic Medical Record</strong><small>ChilGrow</small></span></div>
                 <span class="eyebrow">SELAMAT DATANG</span>
                 <h2>Masuk ke akun Anda</h2>
                 <p class="muted">Gunakan username dan password yang diberikan admin.</p>
