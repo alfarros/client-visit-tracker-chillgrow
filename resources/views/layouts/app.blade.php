@@ -48,6 +48,16 @@
                                 clip-rule="evenodd" />
                         </svg></span> Kunjungan
                 </a>
+                @can('manage-users')
+                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                        href="{{ route('users.index') }}">
+                        <span class="nav-icon" aria-hidden="true">♙</span> Manajemen Admin
+                    </a>
+                @endcan
+                <a class="nav-link {{ request()->routeIs('users.edit', 'users.update') ? 'active' : '' }}"
+                    href="{{ route('users.edit', auth()->user()) }}">
+                    <span class="nav-icon" aria-hidden="true">◎</span> Profil Saya
+                </a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="profile-chip"><span

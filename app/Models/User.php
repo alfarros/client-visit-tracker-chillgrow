@@ -17,6 +17,16 @@ class User extends Authenticatable
         'role',
     ];
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     protected $hidden = [
         'password',
         'remember_token',

@@ -8,6 +8,7 @@ use App\Http\Controllers\EvaluasiBulananController;
 use App\Http\Controllers\KunjunganKlienController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProgramTerapisController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
@@ -20,6 +21,14 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     Route::get('/', fn () => redirect()->route('dashboard'));
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::middleware('super-admin')->group(function (): void {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
 
     Route::resource('pasien', PasienController::class)->except(['destroy']);
     Route::post('/pasien/{pasien}/dokumen', [DokumenPasienController::class, 'store'])->name('pasien.dokumen.store');

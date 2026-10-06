@@ -9,9 +9,9 @@ use Illuminate\Validation\ValidationException;
 
 class CreateUser extends Command
 {
-    protected $signature = 'app:create-user {username?} {--name=} {--role=terapis}';
+    protected $signature = 'app:create-user {username?} {--name=} {--role=admin}';
 
-    protected $description = 'Buat akun admin atau terapis untuk Client Visit Tracker';
+    protected $description = 'Buat akun admin atau super admin untuk Client Visit Tracker';
 
     public function handle(): int
     {
@@ -29,8 +29,8 @@ class CreateUser extends Command
             return self::FAILURE;
         }
 
-        if ($name === '' || mb_strlen($name) > 150 || ! in_array($role, ['admin', 'terapis'], true)) {
-            $this->error('Nama wajib diisi (maksimal 150 karakter) dan role harus admin atau terapis.');
+        if ($name === '' || mb_strlen($name) > 150 || ! in_array($role, ['admin', 'super_admin'], true)) {
+            $this->error('Nama wajib diisi (maksimal 150 karakter) dan role harus admin atau super_admin.');
             return self::FAILURE;
         }
 

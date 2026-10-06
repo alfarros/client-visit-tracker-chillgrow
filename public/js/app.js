@@ -191,6 +191,31 @@
         openEvaluationModal(evaluation, Boolean(evaluation));
     }
 
+    const userModal = document.querySelector('[data-user-modal]');
+    const userModalOpen = document.querySelector('[data-user-modal-open]');
+    const userModalCloseButtons = [...document.querySelectorAll('[data-user-modal-close]')];
+    const openUserModal = () => {
+        if (!userModal) return;
+        userModal.hidden = false;
+        document.body.classList.add('modal-open');
+        userModal.querySelector('input[name="name"]')?.focus();
+    };
+    const closeUserModal = () => {
+        if (!userModal) return;
+        userModal.hidden = true;
+        document.body.classList.remove('modal-open');
+        userModalOpen?.focus();
+    };
+    userModalOpen?.addEventListener('click', openUserModal);
+    userModalCloseButtons.forEach((button) => button.addEventListener('click', closeUserModal));
+    userModal?.addEventListener('click', (event) => {
+        if (event.target === userModal) closeUserModal();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && userModal && !userModal.hidden) closeUserModal();
+    });
+    if (userModal?.dataset.reopen === 'true') openUserModal();
+
     const documentModal = document.querySelector('[data-document-modal]');
     const documentOpenButton = document.querySelector('[data-document-open]');
     const documentCloseButtons = [...document.querySelectorAll('[data-document-close]')];
