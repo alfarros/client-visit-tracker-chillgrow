@@ -12,7 +12,7 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icons/apple-touch-icon.png') }}">
     <title>@yield('title', 'Electronic Medical Record ChilGrow    ') · EMR ChilGrow</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css').'?v='.filemtime(public_path('css/app.css')) }}">
 </head>
 
 <body>
