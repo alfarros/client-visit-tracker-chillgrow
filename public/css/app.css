@@ -1309,6 +1309,10 @@ td:first-child {
   background: #e5f1fc;
   color: #225f96;
 }
+.badge-status-menunggu-diselesaikan {
+  background: #fff0dc;
+  color: #9a5a13;
+}
 .readonly-note {
   color: #8a969e;
   font-size: 10px;

@@ -23,7 +23,7 @@
                 <a class="button button-primary" href="{{ route('kunjungan.create', ['pasien_id' => $pasien->id]) }}">＋ Jadwalkan
                     Kunjungan</a>
             @endif
-            @if ($kunjunganAktif && $kunjunganAktif->status === 'Berlangsung')
+            @if ($kunjunganAktif && in_array($kunjunganAktif->status, ['Berlangsung', 'Menunggu Diselesaikan'], true))
                 <form id="complete-visit-{{ $kunjunganAktif->id }}" method="POST" action="{{ route('kunjungan.complete', $kunjunganAktif) }}">
                     <button class="button button-success" type="button" data-complete-trigger
                         data-form-target="#complete-visit-{{ $kunjunganAktif->id }}"
@@ -53,9 +53,9 @@
     <section class="panel examination-panel">
             @if ($kunjunganAktif)
             <div class="examination-context">
-                <div><span class="eyebrow">JADWAL TERAPI</span><strong>{{ $kunjunganAktif->tanggal_kunjungan->locale('id')->translatedFormat('d F Y') }} @if($kunjunganAktif->jam_kunjungan) · {{ substr((string) $kunjunganAktif->jam_kunjungan, 0, 5) }}@endif</strong>
+                <div><span class="eyebrow">JADWAL TERAPI</span><strong>{{ $kunjunganAktif->tanggal_kunjungan->locale('id')->translatedFormat('d F Y') }} @if($kunjunganAktif->jam_kunjungan && $kunjunganAktif->jam_selesai) · {{ substr((string) $kunjunganAktif->jam_kunjungan, 0, 5) }}–{{ substr((string) $kunjunganAktif->jam_selesai, 0, 5) }}@endif</strong>
                 </div><div class="visit-context-badges"><span
-                    class="badge badge-status-{{ str($kunjunganAktif->status)->lower() }}">{{ $kunjunganAktif->status_label }}</span>
+                    class="badge badge-status-{{ str($kunjunganAktif->status)->slug() }}">{{ $kunjunganAktif->status_label }}</span>
                     <span class="badge badge-{{ strtolower($kunjunganAktif->cara_bayar) }}">{{ $kunjunganAktif->cara_bayar }}</span></div>
             </div>
             @if ($readOnly)
@@ -337,7 +337,7 @@
                     <thead>
                         <tr>
                             <th>Tanggal</th>
-                            <th>Jam</th>
+                            <th>Rentang Waktu</th>
                             <th>Status</th>
                             <th>Cara Bayar</th>
                             <th>Aksi</th>
@@ -347,9 +347,9 @@
                         @foreach ($pasien->kunjungan as $kunjungan)
                             <tr>
                                 <td>{{ $kunjungan->tanggal_kunjungan->locale('id')->translatedFormat('d F Y') }}</td>
-                                <td>{{ $kunjungan->jam_kunjungan ? substr((string) $kunjungan->jam_kunjungan, 0, 5) : '—' }}</td>
+                                <td>{{ $kunjungan->jam_kunjungan && $kunjungan->jam_selesai ? substr((string) $kunjungan->jam_kunjungan, 0, 5).'–'.substr((string) $kunjungan->jam_selesai, 0, 5) : '—' }}</td>
                                 <td><span
-                                        class="badge badge-status-{{ str($kunjungan->status)->lower() }}">{{ $kunjungan->status_label }}</span>
+                                        class="badge badge-status-{{ str($kunjungan->status)->slug() }}">{{ $kunjungan->status_label }}</span>
                                 </td>
                                 <td><span
                                         class="badge badge-{{ strtolower($kunjungan->cara_bayar) }}">{{ $kunjungan->cara_bayar }}</span>

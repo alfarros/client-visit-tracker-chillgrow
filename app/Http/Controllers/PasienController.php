@@ -57,6 +57,7 @@ class PasienController extends Controller
         $melihatRiwayat = $kunjunganDiminta !== null;
         $kunjunganAktif = $kunjunganDiminta
             ?? $pasien->kunjungan->firstWhere('status', 'Berlangsung')
+            ?? $pasien->kunjungan->firstWhere('status', 'Menunggu Diselesaikan')
             ?? $pasien->kunjungan
                 ->filter(fn ($kunjungan) => $kunjungan->status === 'Antre'
                     && $kunjungan->tanggal_kunjungan->greaterThanOrEqualTo(today()))

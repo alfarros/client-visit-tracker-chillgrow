@@ -6,6 +6,7 @@ use App\Http\Requests\StoreKunjunganKlienRequest;
 use App\Http\Requests\UpdateKunjunganKlienRequest;
 use App\Models\KunjunganKlien;
 use App\Models\Pasien;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -63,7 +64,14 @@ class KunjunganKlienController extends Controller
 
     public function store(StoreKunjunganKlienRequest $request): RedirectResponse
     {
-        KunjunganKlien::create($request->validated());
+        $data = $request->validated();
+        $data['status'] = $this->hitungStatusOtomatis(
+            $data['tanggal_kunjungan'],
+            $data['jam_kunjungan'],
+            $data['jam_selesai'],
+        );
+
+        KunjunganKlien::create($data);
 
         return redirect()->route('kunjungan.index')->with('success', 'Data berhasil disimpan.');
     }
@@ -82,7 +90,15 @@ class KunjunganKlienController extends Controller
 
     public function update(UpdateKunjunganKlienRequest $request, KunjunganKlien $kunjunganKlien): RedirectResponse
     {
-        $kunjunganKlien->update($request->validated());
+        $data = $request->validated();
+        $data['status'] = $this->hitungStatusOtomatis(
+            $data['tanggal_kunjungan'],
+            $data['jam_kunjungan'],
+            $data['jam_selesai'],
+            $kunjunganKlien->status,
+        );
+
+        $kunjunganKlien->update($data);
 
         return redirect()->route('kunjungan.index')->with('success', 'Data berhasil diperbarui.');
     }
@@ -104,9 +120,9 @@ class KunjunganKlienController extends Controller
             return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
         }
 
-        if ($kunjunganKlien->status !== 'Berlangsung') {
+        if (! in_array($kunjunganKlien->status, ['Berlangsung', 'Menunggu Diselesaikan'], true)) {
             return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
-                ->with('error', 'Terapi belum mencapai jam jadwalnya. Status akan berubah otomatis saat jadwal tiba.');
+                ->with('error', 'Terapi belum mencapai waktu jadwalnya. Status akan berubah otomatis saat jadwal tiba.');
         }
 
         if (! $kunjunganKlien->cppts()->exists() || ! $kunjunganKlien->programTerapis()->exists()) {
@@ -118,5 +134,31 @@ class KunjunganKlienController extends Controller
 
         return redirect()->route('pasien.show', [$kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
             ->with('success', 'Sesi terapi ditandai selesai. Catatan kini hanya dapat dilihat.');
+    }
+
+    private function hitungStatusOtomatis($tanggal, $jamMulai, $jamSelesai, $statusSaatIni = null): string
+    {
+        if (in_array($statusSaatIni, ['Selesai', 'Batal'], true)) {
+            return $statusSaatIni;
+        }
+
+        $zonaWaktu = config('app.timezone');
+        $waktuMulai = Carbon::parse($tanggal.' '.$jamMulai, $zonaWaktu);
+        $waktuSelesai = Carbon::parse($tanggal.' '.$jamSelesai, $zonaWaktu);
+        $sekarang = Carbon::now($zonaWaktu);
+
+        if ($sekarang->lt($waktuMulai)) {
+            return 'Antre';
+        }
+
+        if ($sekarang->between($waktuMulai, $waktuSelesai)) {
+            return 'Berlangsung';
+        }
+
+        if ($sekarang->gt($waktuSelesai)) {
+            return 'Menunggu Diselesaikan';
+        }
+
+        return 'Antre';
     }
 }

@@ -10,6 +10,7 @@ class KunjunganKlien extends Model
         'pasien_id',
         'tanggal_kunjungan',
         'jam_kunjungan',
+        'jam_selesai',
         'cara_bayar',
         'status',
     ];

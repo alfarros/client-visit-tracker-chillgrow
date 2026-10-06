@@ -15,15 +15,32 @@ class StartScheduledVisits extends Command
     public function handle(): int
     {
         $now = Carbon::now(config('app.timezone'));
+        $today = $now->toDateString();
+        $activeStatuses = ['Antre', 'Berlangsung', 'Menunggu Diselesaikan'];
 
-        $updated = KunjunganKlien::query()
-            ->whereDate('tanggal_kunjungan', $now->toDateString())
+        $pastVisits = KunjunganKlien::query()
+            ->whereDate('tanggal_kunjungan', '<', $today)
+            ->whereIn('status', ['Antre', 'Berlangsung'])
+            ->update(['status' => 'Menunggu Diselesaikan']);
+
+        $pastTodayVisits = KunjunganKlien::query()
+            ->whereDate('tanggal_kunjungan', $today)
+            ->whereNotNull('jam_selesai')
+            ->whereTime('jam_selesai', '<', $now->format('H:i:s'))
+            ->whereIn('status', ['Antre', 'Berlangsung'])
+            ->update(['status' => 'Menunggu Diselesaikan']);
+
+        $ongoingVisits = KunjunganKlien::query()
+            ->whereDate('tanggal_kunjungan', $today)
             ->whereNotNull('jam_kunjungan')
+            ->whereNotNull('jam_selesai')
             ->whereTime('jam_kunjungan', '<=', $now->format('H:i:s'))
-            ->where('status', 'Antre')
+            ->whereTime('jam_selesai', '>=', $now->format('H:i:s'))
+            ->whereIn('status', $activeStatuses)
             ->update(['status' => 'Berlangsung']);
 
-        $this->info("{$updated} kunjungan diubah menjadi Terapi Berlangsung.");
+        $waiting = $pastVisits + $pastTodayVisits;
+        $this->info("{$ongoingVisits} kunjungan berlangsung; {$waiting} menunggu diselesaikan.");
 
         return self::SUCCESS;
     }

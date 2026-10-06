@@ -36,44 +36,53 @@
                 @enderror
             </div>
             
-            <div class="field-grid">
+            <div class="field min-w-0">
+                <label for="tanggal_kunjungan">Tanggal Kunjungan <span class="required-mark">*</span></label>
+                <input id="tanggal_kunjungan" name="tanggal_kunjungan" type="date"
+                    class="w-full max-w-full appearance-none bg-white"
+                    value="{{ old('tanggal_kunjungan', $kunjunganKlien->tanggal_kunjungan?->format('Y-m-d')) }}"
+                    required>
+                @error('tanggal_kunjungan')
+                    <p class="field-error">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="field-grid time-range-grid">
                 <div class="field min-w-0">
-                    <label for="tanggal_kunjungan">Tanggal Kunjungan <span class="required-mark">*</span></label>
-                    <input id="tanggal_kunjungan" name="tanggal_kunjungan" type="date"
-                        class="w-full max-w-full appearance-none bg-white"
-                        value="{{ old('tanggal_kunjungan', $kunjunganKlien->tanggal_kunjungan?->format('Y-m-d')) }}"
-                        required>
-                    @error('tanggal_kunjungan')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="field min-w-0">
-                    <label for="jam_kunjungan">Jam Kunjungan @if ($formMethod === 'POST')<span class="required-mark">*</span>@endif</label>
+                    <label for="jam_kunjungan">Jam Mulai <span class="required-mark">*</span></label>
                     <input id="jam_kunjungan" name="jam_kunjungan" type="time"
                         class="w-full max-w-full appearance-none bg-white"
                         value="{{ old('jam_kunjungan', $kunjunganKlien->jam_kunjungan ? substr((string) $kunjunganKlien->jam_kunjungan, 0, 5) : '') }}"
-                        @required($formMethod === 'POST')>
-                    @if ($formMethod !== 'POST' && ! $kunjunganKlien->jam_kunjungan)
-                        <span class="field-hint">Kunjungan ini belum memiliki jam jadwal. Isi agar status dapat berubah otomatis.</span>
-                    @endif
+                        required>
                     @error('jam_kunjungan')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
                 </div>
-                
+
                 <div class="field min-w-0">
-                    <label for="cara_bayar">Cara Bayar <span class="required-mark">*</span></label>
-                    <select id="cara_bayar" name="cara_bayar" class="w-full max-w-full appearance-none bg-white" required>
-                        <option value="">Pilih cara bayar</option>
-                        @foreach (['Tunai', 'Transfer'] as $caraBayar)
-                            <option value="{{ $caraBayar }}" @selected(old('cara_bayar', $kunjunganKlien->cara_bayar) === $caraBayar)>{{ $caraBayar }}</option>
-                        @endforeach
-                    </select>
-                    @error('cara_bayar')
+                    <label for="jam_selesai">Jam Selesai <span class="required-mark">*</span></label>
+                    <input id="jam_selesai" name="jam_selesai" type="time"
+                        class="w-full max-w-full appearance-none bg-white"
+                        value="{{ old('jam_selesai', $kunjunganKlien->jam_selesai ? substr((string) $kunjunganKlien->jam_selesai, 0, 5) : '') }}"
+                        required>
+                    <span class="field-hint">Jam selesai harus setelah jam mulai.</span>
+                    @error('jam_selesai')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+
+            <div class="field">
+                <label for="cara_bayar">Cara Bayar <span class="required-mark">*</span></label>
+                <select id="cara_bayar" name="cara_bayar" class="w-full max-w-full appearance-none bg-white" required>
+                    <option value="">Pilih cara bayar</option>
+                    @foreach (['Tunai', 'Transfer'] as $caraBayar)
+                        <option value="{{ $caraBayar }}" @selected(old('cara_bayar', $kunjunganKlien->cara_bayar) === $caraBayar)>{{ $caraBayar }}</option>
+                    @endforeach
+                </select>
+                @error('cara_bayar')
+                    <p class="field-error">{{ $message }}</p>
+                @enderror
             </div>
             <div class="form-actions"><a class="button button-secondary"
                     href="{{ $cancelUrl }}">Batal</a><button class="button button-primary"

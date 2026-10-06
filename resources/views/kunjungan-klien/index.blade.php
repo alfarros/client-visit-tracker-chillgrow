@@ -42,7 +42,7 @@
                             <th>Nama Pasien</th>
                             <th>No. Rekam Medis</th>
                             <th>Tanggal</th>
-                            <th>Jam</th>
+                            <th>Rentang Waktu</th>
                             <th>Cara Bayar</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -54,12 +54,12 @@
                                 <td class="cell-name">{{ $item->pasien->nama_lengkap }}</td>
                                 <td class="cell-mono">{{ $item->pasien->no_rekam_medis }}</td>
                                 <td>{{ $item->tanggal_kunjungan->format('d M Y') }}</td>
-                                <td>{{ $item->jam_kunjungan ? substr((string) $item->jam_kunjungan, 0, 5) : '—' }}</td>
+                                <td>{{ $item->jam_kunjungan && $item->jam_selesai ? substr((string) $item->jam_kunjungan, 0, 5).'–'.substr((string) $item->jam_selesai, 0, 5) : '—' }}</td>
                                 <td><span
                                         class="badge badge-{{ strtolower($item->cara_bayar) }}">{{ $item->cara_bayar }}</span>
                                 </td>
                                 <td><span
-                                        class="badge badge-status-{{ str($item->status)->lower() }}">{{ $item->status_label }}</span>
+                                        class="badge badge-status-{{ str($item->status)->slug() }}">{{ $item->status_label }}</span>
                                 </td>
                                 <td class="row-actions">
                                     <details class="action-menu">
@@ -72,7 +72,7 @@
                                                 title="Periksa Pasien">Periksa</a><a
                                                 href="{{ route('kunjungan.edit', $item) }}"
                                                 title="Ubah jadwal kunjungan">Edit Jadwal</a>
-                                            @if ($item->status === 'Berlangsung')
+                                            @if (in_array($item->status, ['Berlangsung', 'Menunggu Diselesaikan'], true))
                                                 <form id="complete-visit-{{ $item->id }}" method="POST" action="{{ route('kunjungan.complete', $item) }}">
                                                     <button type="button" data-complete-trigger
                                                         data-form-target="#complete-visit-{{ $item->id }}"

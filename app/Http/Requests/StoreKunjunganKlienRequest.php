@@ -19,6 +19,7 @@ class StoreKunjunganKlienRequest extends FormRequest
             'pasien_id' => ['required', 'integer', Rule::exists((new Pasien())->getTable(), 'id')],
             'tanggal_kunjungan' => ['required', 'date_format:Y-m-d'],
             'jam_kunjungan' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_kunjungan'],
             'cara_bayar' => ['required', Rule::in(['Tunai', 'Transfer'])],
         ];
     }
@@ -32,6 +33,9 @@ class StoreKunjunganKlienRequest extends FormRequest
             'tanggal_kunjungan.date_format' => 'Masukkan tanggal kunjungan yang valid.',
             'jam_kunjungan.required' => 'Jam kunjungan wajib diisi.',
             'jam_kunjungan.date_format' => 'Masukkan jam kunjungan yang valid.',
+            'jam_selesai.required' => 'Jam selesai wajib diisi.',
+            'jam_selesai.date_format' => 'Masukkan jam selesai yang valid.',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
             'cara_bayar.required' => 'Pilih cara bayar.',
             'cara_bayar.in' => 'Pilih salah satu cara bayar yang tersedia.',
         ];
