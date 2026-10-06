@@ -9,6 +9,7 @@ use App\Models\Pasien;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class KunjunganKlienController extends Controller
 {
@@ -63,7 +64,21 @@ class KunjunganKlienController extends Controller
 
     public function store(StoreKunjunganKlienRequest $request): RedirectResponse
     {
-        KunjunganKlien::create($request->validated());
+       $data = $request->validated();
+
+        // Cek apakah tanggal kunjungan yang diinput adalah tanggal lampau (sebelum hari ini)
+        $tanggalKunjungan = Carbon::parse($data['tanggal_kunjungan']);
+        
+        if ($tanggalKunjungan->isPast() && ! $tanggalKunjungan->isToday()) {
+            // Jika data susulan (backdate), atur status awal menjadi 'Berlangsung' 
+            // agar terapis bisa langsung mengisi CPPT & Program Terapi
+            $data['status'] = $data['status'] ?? 'Berlangsung';
+        } else {
+            // Jika hari ini / mendatang, gunakan status Antre
+            $data['status'] = $data['status'] ?? 'Antre';
+        }
+
+        KunjunganKlien::create($data);
 
         return redirect()->route('kunjungan.index')->with('success', 'Data berhasil disimpan.');
     }
@@ -101,10 +116,15 @@ class KunjunganKlienController extends Controller
     public function complete(KunjunganKlien $kunjunganKlien): RedirectResponse
     {
         if ($kunjunganKlien->status === 'Batal') {
-            return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
-        }
+        return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
+    }
 
-        if ($kunjunganKlien->status !== 'Berlangsung') {
+        $tanggalKunjungan = Carbon::parse($kunjunganKlien->tanggal_kunjungan);
+
+        // Izinkan penyelesaian jika statusnya 'Berlangsung', ATAU jika datanya adalah tanggal lampau
+        $isBackdate = $tanggalKunjungan->isPast() && ! $tanggalKunjungan->isToday();
+
+        if ($kunjunganKlien->status !== 'Berlangsung' && ! $isBackdate) {
             return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
                 ->with('error', 'Terapi belum mencapai jam jadwalnya. Status akan berubah otomatis saat jadwal tiba.');
         }
