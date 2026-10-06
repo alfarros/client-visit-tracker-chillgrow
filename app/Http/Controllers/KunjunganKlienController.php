@@ -117,8 +117,8 @@ class KunjunganKlienController extends Controller
     public function complete(KunjunganKlien $kunjunganKlien): RedirectResponse
     {
         if ($kunjunganKlien->status === 'Batal') {
-            return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
-        }
+        return redirect()->route('kunjungan.index')->with('error', 'Kunjungan yang dibatalkan tidak dapat diselesaikan.');
+    }
 
         if (! in_array($kunjunganKlien->status, ['Berlangsung', 'Menunggu Diselesaikan'], true)) {
             return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id])
