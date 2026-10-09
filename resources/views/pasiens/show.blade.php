@@ -73,6 +73,11 @@
             </div>
             @if ($kunjunganAktif)
             <div class="exam-tab-panel" id="panel-program-terapi" role="tabpanel" aria-labelledby="tab-program-terapi">
+                @if ($programTerapis)
+                    <div class="exam-tab-toolbar">
+                        <a class="button button-secondary button-small" href="{{ route('kunjungan.program.word', $kunjunganAktif) }}">📄 Export DOCX</a>
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('kunjungan.program.update', $kunjunganAktif) }}" class="form-stack">
                     @csrf @method('PUT')
                     <div class="field"><label for="long_term_goals">Tujuan Jangka Panjang</label>
@@ -106,6 +111,11 @@
                 </form>
             </div>
             <div class="exam-tab-panel" id="panel-cppt" role="tabpanel" aria-labelledby="tab-cppt" hidden>
+                @if ($cppt)
+                    <div class="exam-tab-toolbar">
+                        <a class="button button-secondary button-small" href="{{ route('kunjungan.cppt.word', $kunjunganAktif) }}">📄 Export DOCX</a>
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('kunjungan.cppt.update', $kunjunganAktif) }}" class="form-stack">
                     @csrf @method('PUT')
                     <div class="field-grid">

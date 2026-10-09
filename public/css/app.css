@@ -1436,6 +1436,14 @@ td:first-child {
 .exam-tab-panel[hidden] {
   display: none;
 }
+.exam-tab-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+.exam-tab-toolbar .button {
+  text-decoration: none;
+}
 .progress-panel,
 .archive-panel {
   margin-top: 21px;

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ExportsMedicalRecordWord;
 use App\Models\KunjunganKlien;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CpptController extends Controller
 {
+    use ExportsMedicalRecordWord;
+
     public function show(KunjunganKlien $kunjunganKlien): RedirectResponse
     {
         return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id, 'tab' => 'cppt']);
@@ -31,5 +35,33 @@ class CpptController extends Controller
 
         return redirect()->route('pasien.show', ['pasien' => $kunjunganKlien->pasien_id, 'kunjungan' => $kunjunganKlien->id, 'tab' => 'cppt'])
             ->with('success', 'CPPT berhasil disimpan.');
+    }
+
+    public function exportWord(KunjunganKlien $kunjunganKlien): BinaryFileResponse
+    {
+        $kunjunganKlien->loadMissing('pasien');
+
+        $cppt = $kunjunganKlien->cppts()->orderByDesc('tanggal')->first();
+
+        if ($cppt === null) {
+            abort(404, 'CPPT belum tersedia untuk kunjungan ini.');
+        }
+
+        $values = array_merge($this->patientWordValues($kunjunganKlien), [
+            'tanggal_catatan' => $cppt->tanggal?->locale('id')->translatedFormat('d F Y') ?: '—',
+            'penanggung_jawab' => $cppt->penanggung_jawab,
+            'subjective' => $cppt->subjective,
+            'objective' => $cppt->objective,
+            'assessment' => $cppt->assessment,
+            'planning' => $cppt->planning,
+        ]);
+
+        $filename = sprintf(
+            'CPPT_%s_%s.docx',
+            $this->sanitizeFilenamePart($kunjunganKlien->pasien?->nama_lengkap ?? ''),
+            $kunjunganKlien->tanggal_kunjungan->format('Y-m-d'),
+        );
+
+        return $this->downloadWordFromTemplate('cppt.docx', $values, $filename);
     }
 }

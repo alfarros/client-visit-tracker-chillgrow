@@ -54,4 +54,6 @@ Route::middleware('auth')->group(function (): void {
         ->name('kunjungan.program.update');
     Route::get('/kunjungan/{kunjunganKlien}/cppt', [CpptController::class, 'show'])->name('kunjungan.cppt.show');
     Route::put('/kunjungan/{kunjunganKlien}/cppt', [CpptController::class, 'update'])->name('kunjungan.cppt.update');
+    Route::get('/kunjungan/{kunjunganKlien}/cppt/word', [CpptController::class, 'exportWord'])->name('kunjungan.cppt.word');
+    Route::get('/kunjungan/{kunjunganKlien}/program-terapis/word', [ProgramTerapisController::class, 'exportWord'])->name('kunjungan.program.word');
 });
